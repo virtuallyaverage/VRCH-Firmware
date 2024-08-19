@@ -1,0 +1,13 @@
+{
+    "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
+    "frameworks": "arduino",
+    "name": "PWM.PCA",
+    "platforms": [
+        "espressif8266",
+        "espressif32"
+    ],
+    "dependencies": {
+        "mbed-bxd/Adafruit_PWMServoDriver": "0.0.0+sha.41a00db32ae7"
+
+    }
+}
