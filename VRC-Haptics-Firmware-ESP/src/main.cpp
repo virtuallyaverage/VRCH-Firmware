@@ -1,16 +1,19 @@
 #include <Arduino.h>
 
 //main config files
-#include "variables.h"
+#include "globals.h"
 #include "config.h"
 #include "main.h"
 
 //import modules
 #include "OSC/osc.h"
-#include "PCA/pca.h"
+#include "PWM/PCA/pca.h"
 
 //setup scheduler
 #include <TaskScheduler.h>
+
+//init globals here
+uint16_t motorDuty[32] = {0};
 
 Scheduler TaskScheduler;
 
@@ -62,6 +65,7 @@ void loop() {
   if (millis()-start >= 1000) {
     Serial.print("LoopRate: ");
     Serial.println(ticks);
+    printMotorDuty();
 
     start = millis();
     ticks = 0;

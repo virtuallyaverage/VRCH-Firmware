@@ -1,8 +1,9 @@
 #include <ArduinoOSCWiFi.h>
 
 #include "config.h"
+#include "globals.h"
 
-#include "callbacks.cpp"
+#include "OSC/callbacks.h"
 
 const IPAddress ip(OSC_LOCAL_IP);
 const IPAddress gateway(OSC_GATEWAY_IP);
@@ -15,14 +16,17 @@ void startOSCWifi() {
     Serial.println("WIFI: Connecting");
     
     // Wait for connection
-    while (WiFi.status() != WL_CONNECTED) {}
+    while (WiFi.status() != WL_CONNECTED) {
+        //Serial.println("");
+        delay(1);
+    }
 
     // Print the IP address
     Serial.print("WIFI: IP: ");
     Serial.println(WiFi.localIP());
 
     // Setup OSC
-    OscWiFi.subscribe(OSC_IN_PORT, OSC_MOTOR_ADDRESS, MotorMessage_Callback);
+    OscWiFi.subscribe(OSC_IN_PORT, OSC_MOTOR_ADDRESS, motorMessage_callback);
     OscWiFi.subscribe(OSC_IN_PORT, "/ping/", serverPing_callback);
     
 

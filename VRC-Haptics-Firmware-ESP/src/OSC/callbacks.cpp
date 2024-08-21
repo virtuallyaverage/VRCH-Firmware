@@ -1,14 +1,12 @@
 #include <ArduinoOSCWiFi.h>
 
 #include "config.h"
-#include "variables.h"
+#include "globals.h"
+
 #include "osc.h"
 
-void motorMessage_callback(const OscMessage&);
-void serverPing_callback(const OscMessage&);
-void printMessage(const OscMessage& message);
 
-void MotorMessage_Callback(const OscMessage& message){
+void motorMessage_callback(const OscMessage& message){
 
     // create char array
     String msg_str = message.arg<String>(0);
