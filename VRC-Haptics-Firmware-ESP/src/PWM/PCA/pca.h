@@ -5,4 +5,4 @@ void setAllDuty();
 void setToDuty(uint16_t duty);
 
 
-#define PCA_FREQUENCY 1600
+#define PCA_FREQUENCY 1500

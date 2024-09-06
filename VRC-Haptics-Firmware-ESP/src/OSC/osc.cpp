@@ -33,6 +33,7 @@ void startOSCWifi() {
     Serial.println("OSC setup complete.");
 }
 
+/// @brief Push and pull OSC updates
 void oscTick() {
     OscWiFi.update(); // should be called to subscribe + publish osc
     
@@ -66,8 +67,5 @@ void sendOSC(const String& oscAddress, const int8_t& value)  {
     OscWiFi.send(OSC_SERVER_IP_STR, OSC_OUT_PORT, oscAddress, value);
 }
 void sendOSC(const String& oscAddress, const float_t& value)  {
-    OscWiFi.send(OSC_SERVER_IP_STR, OSC_OUT_PORT, oscAddress, value);
-}
-void sendOSC(const String& oscAddress, char *value, uint16_t size)  {
     OscWiFi.send(OSC_SERVER_IP_STR, OSC_OUT_PORT, oscAddress, value);
 }

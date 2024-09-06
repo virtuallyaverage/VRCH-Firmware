@@ -2,7 +2,10 @@
 #define WIFI_SSID "SlimeServer"
 #define WIFI_PASSWORD "95815480"
 
-#define MOTOR_MAP 8,11,1,0,9,10,3,2,15,14,6,7,13,12,4,5,25,24,16,17,27,26,18,19,29,30,22,21,28,31,20,23
+//board
+#define ESP32C3
+
+#define MOTOR_MAP 15, 14, 1, 0, 13, 12, 3, 2, 8, 9, 5, 6, 10, 11, 7, 4,25,24,16,17,27,26,18,19,29,30,22,21,28,31,20,23
 
 //IP Addresses
 #define OSC_SERVER_IP 192, 168, 1, 104

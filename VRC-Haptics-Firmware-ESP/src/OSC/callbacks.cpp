@@ -6,7 +6,13 @@
 #include "osc.h"
 
 
+bool first_packet = true;
+
 void motorMessage_callback(const OscMessage& message){
+    if (first_packet){
+        Serial.println("FIRST PACKET");
+        first_packet = false;
+    }
 
     // create char array
     String msg_str = message.arg<String>(0);
