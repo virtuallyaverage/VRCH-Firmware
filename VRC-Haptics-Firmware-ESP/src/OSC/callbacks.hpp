@@ -1,10 +1,12 @@
 #include <ArduinoOSCWiFi.h>
 
-#include "config.h"
 #include "globals.h"
+#include "config.h"
 
 #include "osc.h"
 
+// number of bytes for each motor value 
+#define OSC_MOTOR_BYTE_NUM 4
 
 bool first_packet = true;
 
@@ -38,7 +40,7 @@ void serverPing_callback(const OscMessage& message) {
     
 }
 
-void printMessage(const OscMessage& message) {
+void printOSCMessage(const OscMessage& message) {
     Serial.print("Address: ");
     Serial.println(message.address());
     for (size_t i = 0; i < message.size(); i++) {

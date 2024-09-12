@@ -18,9 +18,7 @@ uint16_t motorDuty[32] = {0};
 void setup() {
   Serial.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT);
-
-  startOSCWifi();
+  WirelessStart();
   startPCA();
 
 }
@@ -31,21 +29,18 @@ unsigned long start = millis();
 void loop() {
 
   unsigned long start_task = micros();
-
-  oscTick();
+  WirelessTick();
   setAllDuty();
 
 
-  //rampTesting();
+  //rampTesting(); //uncomment this to continually ramp up and down 
+  // (USED FOR MOTOR TESTING)
   
   ticks += 1;
   if (millis()-start >= 1000) {
     Serial.print("Loop/sec: ");
     Serial.println(ticks);
     //printMotorDuty();
-
-    digitalWrite(LED_BUILTIN, lightState ? HIGH : LOW);
-    lightState = !lightState;
 
     start = millis();
     ticks = 0;

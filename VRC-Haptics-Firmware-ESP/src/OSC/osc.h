@@ -1,13 +1,16 @@
-void startOSCWifi();
-void oscTick();
-void printMotorDuty();
+/// @brief public functions for the osc.cpp file
 
-//OSC overloads
-void sendOSC(const String& oscAddress, const bool& value);
-void sendOSC(const String& oscAddress, const uint16_t& value);
-void sendOSC(const String& oscAddress, const uint8_t& value);
-void sendOSC(const String& oscAddress, const int16_t& value);
-void sendOSC(const String& oscAddress, const int8_t& value);
-void sendOSC(const String& oscAddress, const float_t& value);
+#define RECIEVE_PORT 1027
 
+#define HEARTBEAT_ADDRESS "/hrtbt"
+#define PING_ADDRESS "/ping"
+
+#define MDNS_SERVICE_NAME "haptics"
+#define MDNS_SERVICE_PROTOCOL "osc"
+
+void WirelessStart();
+
+bool WiFiConnected();
+
+void WirelessTick();
 
