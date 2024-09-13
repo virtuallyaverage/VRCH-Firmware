@@ -4,6 +4,6 @@
 
 void startPCA();
 
-void setMotorDuty(uint8_t motorIndex, uint16_t dutyCycle);
-void setAllDuty();
-void setToDuty(uint16_t duty);
+void setPCAMotorDuty(uint8_t motorIndex, uint16_t dutyCycle);
+void setPcaDuty();
+void setAllPcaDuty(uint16_t duty);

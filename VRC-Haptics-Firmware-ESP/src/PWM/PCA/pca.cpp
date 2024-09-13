@@ -1,12 +1,13 @@
 #include <Arduino.h>
 
-#include "config.h"
-#include "globals.h"
+#include "config.hpp"
+#include "globals.hpp"
 
-#include "PWM/pwmConfig.hpp"
 #include "pca.h"
+#include "macros.h"
 
 #include "Adafruit_PWMServoDriver.h"
+#include <vector> // I give up trying to get the other method working
 
 
 
@@ -15,8 +16,7 @@ Adafruit_PWMServoDriver pcaModule2 = Adafruit_PWMServoDriver(PCA_2, Wire);//, Wi
 
 bool secondPCAConnected = false;
 
-uint8_t motorMap[32] = {MOTOR_MAP};
-uint16_t debounceBuffer[32] = {0};
+std::vector<uint16_t> debounceBuffer(pcaMapLen, 0);  // Dynamically sized array
 
 /// @brief Start pca module communication
 void startPCA() {
@@ -64,27 +64,37 @@ void startPCA() {
   
   
   //chime
-  setToDuty(4095);
+  setAllPcaDuty(4095);
   delay(100);
-  setToDuty(0);
+  setAllPcaDuty(0);
 
 }
 
-/// @brief Sets all motors to the specified duty cycle, mapped to the MOTOR_MAP defined in config.h
-/// @param dutyCycle The list of each motors duty cycle
-void setAllDuty() {
+/// @brief Sets PCA motors to the values from the pcaMotorVals array
+void setPcaDuty() {
     for(uint8_t i = 0; i < 16; i++) {
-        pcaModule1.setPin(motorMap[i], motorDuty[i]);
-        //pcaModule2.setPin(motorMap[i+16]-16, motorDuty[i+16]);// 3 HOURS JUST TO FIND THE -16..... I WANT TO DIE
-    }
-}
-void setToDuty(uint16_t duty) {
-    for(uint8_t i = 0; i < 32; i++) {
-        setMotorDuty(motorMap[i], duty);
+      const uint16_t value = pcaMotorVals[i];
+      const uint16_t value2 = pcaMotorVals[i+16];
+      if (value != debounceBuffer[i]) {
+        pcaModule1.setPin(pcaMap[i], value);
+        debounceBuffer[i] = value;
+      }
+      if (value2 != debounceBuffer[i+16] && secondPCAConnected) { //only send to second if it is connected
+        pcaModule2.setPin(pcaMap[i+16]-16, value2);// 3 HOURS JUST TO FIND THE -16..... I WANT TO DIE
+        debounceBuffer[i+16] = value2;
+      }
     }
 }
 
-void setMotorDuty(uint8_t motorIndex, uint16_t dutyCycle){
+/// @brief Sets all motors to the specified duty cycle, mapped to the PCA_MAP defined in config.h
+/// @param dutyCycle The list of each motors duty cycle
+void setAllPcaDuty(uint16_t duty) {
+    for(uint8_t i = 0; i < pcaMapLen; i++) {
+        setPCAMotorDuty(pcaMap[i], duty);
+    }
+}
+
+void setPCAMotorDuty(uint8_t motorIndex, uint16_t dutyCycle){
   if (motorIndex < 16) {
     //only push updates if they are different
     if (debounceBuffer[motorIndex] != dutyCycle) {

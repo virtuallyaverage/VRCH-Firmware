@@ -4,8 +4,8 @@
 #include <ESPmDNS.h>
 #include <WiFi.h>
 
-#include "config.h"
-#include "globals.h"
+#include "config.hpp"
+#include "globals.hpp"
 #include "osc.h"
 
 // OSC client to send messages back to the hosts
