@@ -1,7 +1,7 @@
 #include <ArduinoOSCWiFi.h>
 
-#include "globals.h"
-#include "config.h"
+#include "globals.hpp"
+#include "config.hpp"
 
 #include "osc.h"
 
@@ -9,6 +9,26 @@
 #define OSC_MOTOR_BYTE_NUM 4
 
 bool first_packet = true;
+
+bool printNext = false;
+
+inline void printRaw() {
+    printNext = true;
+}
+
+inline void updateMotorVals(){
+    for (uint8_t i = 0; i < totalMotors; i++) {
+        if (i < ledcMapLen-1) {
+            ledcMotorVals[i] = allMotorVals[i];
+        } else if (i < (totalMotors)) { //must be greater than ledc motors, but not more than the combined total of motors
+            pcaMotorVals[i-ledcMapLen] = allMotorVals[i]; //assign to offset array
+        } else {
+            LOG_ERROR(F("More motors served than configured: "), i);
+        }
+        
+    }
+    
+}
 
 void motorMessage_callback(const OscMessage& message){
     if (first_packet){
@@ -22,7 +42,7 @@ void motorMessage_callback(const OscMessage& message){
     char msg_char[msg_length + 1]; // +1 for null terminator
     msg_str.toCharArray(msg_char, msg_length + 1);
 
-    const int numElements = msg_length / OSC_MOTOR_BYTE_NUM;
+    const uint8_t numElements = msg_length / OSC_MOTOR_BYTE_NUM;
 
     // process each hex number
     char snippet[OSC_MOTOR_BYTE_NUM + 1]; // +1 for null terminator
@@ -30,15 +50,13 @@ void motorMessage_callback(const OscMessage& message){
         memcpy(snippet, &msg_char[OSC_MOTOR_BYTE_NUM * i], OSC_MOTOR_BYTE_NUM);
         snippet[OSC_MOTOR_BYTE_NUM] = '\0'; // null terminate the snippet
         // convert a section of the input string into an integer number
-        motorDuty[i] = strtol(snippet, NULL, 16);
+        allMotorVals[i] = strtol(snippet, NULL, 16);
     }
+
+    updateMotorVals();
     
 }
 
-void serverPing_callback(const OscMessage& message) {
-    Serial.println("WIFI: Ping from server");
-    
-}
 
 void printOSCMessage(const OscMessage& message) {
     Serial.print("Address: ");

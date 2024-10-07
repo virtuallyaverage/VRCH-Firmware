@@ -4,8 +4,8 @@
 #include <ESPmDNS.h>
 #include <WiFi.h>
 
-#include "config.h"
-#include "globals.h"
+#include "config.hpp"
+#include "globals.hpp"
 #include "osc.h"
 
 // OSC client to send messages back to the hosts
@@ -23,8 +23,9 @@ uint32_t recvPort = RECIEVE_PORT;
 
 #ifdef ROLE_VEST
 const String mdnsName = "vest";
-#elif ROLE_HEAD
-const String mdnsName = "Haptic_Head";
+#endif
+#ifdef ROLE_HEAD
+const String mdnsName = "head";
 #endif
 
 void StartMDNS();

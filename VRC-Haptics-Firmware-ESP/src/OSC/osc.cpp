@@ -1,6 +1,11 @@
 #include "OSC/callbacks.hpp"
 #include "OSC/_osc.h"
 
+
+void printRawPacket() {
+    printRaw();
+}
+
 /// @brief start mDNS and OSC
 void WirelessStart() {
     LOG_SET_LEVEL(DebugLogLevel::LVL_TRACE);
@@ -70,6 +75,9 @@ void handlePing(const OscMessage& message){
     sendPort = message.arg<uint16_t>(0);  // Get the host's port from the message
     hostIP = message.remoteIP();  // Get the host's IP address
 
+    //create our own recieving server
+    OscWiFi.subscribe(RECIEVE_PORT, MOTOR_ADDRESS, &motorMessage_callback);
+
     LOG_DEBUG("Received ping from:", hostIP);
 
     //sending client
@@ -78,6 +86,7 @@ void handlePing(const OscMessage& message){
     // Respond to ping
     OscMessage pingResponse(PING_ADDRESS);
     pingResponse.pushInt32(RECIEVE_PORT);
+    pingResponse.pushString(WiFi.macAddress());
     oscClient.send(hostIP, sendPort, pingResponse);
 
     if (!heartbeatPublisher){
