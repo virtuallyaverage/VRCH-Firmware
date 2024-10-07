@@ -10,14 +10,20 @@
 
 bool first_packet = true;
 
+bool printNext = false;
+
+inline void printRaw() {
+    printNext = true;
+}
+
 inline void updateMotorVals(){
     for (uint8_t i = 0; i < totalMotors; i++) {
         if (i < ledcMapLen-1) {
             ledcMotorVals[i] = allMotorVals[i];
-        } else if (i < (totalMotors-1)) { //must be greater than ledc motors, but not more than the combined total of motors
+        } else if (i < (totalMotors)) { //must be greater than ledc motors, but not more than the combined total of motors
             pcaMotorVals[i-ledcMapLen] = allMotorVals[i]; //assign to offset array
         } else {
-            LOG_ERROR(F("More motors served than configured"));
+            LOG_ERROR(F("More motors served than configured: "), i);
         }
         
     }

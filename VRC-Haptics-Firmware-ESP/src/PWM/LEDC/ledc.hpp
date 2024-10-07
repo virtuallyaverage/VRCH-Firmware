@@ -6,17 +6,25 @@
 #include "globals.hpp"
 #include "macros.h"
 
-//defaults from senseshift (THANKS! :=) )
+//defaults from senseshift (THANKS! :-) )
 #define LEDC_FREQUENCY 60
 #define LEDC_RESOLUTION 12
 
 inline int setChannel(const uint8_t channel, const uint16_t duty){
+    #ifndef LEDC_MAP
+    return 1;
+    #endif
+
     ledcWrite(channel, duty);
-    LOG_DEBUG("Set Channel: ", channel, " to duty:", duty);
+    //LOG_DEBUG("Set Channel: ", channel, " to duty:", duty);
     return 0;
 }
 
 int setAllLedcDuty(const uint16_t duty) {
+    #ifndef LEDC_MAP
+    return 1;
+    #endif
+
     for (int i = 0; i < ledcMapLen; i++) {
         setChannel(i, duty);
     }

@@ -12,13 +12,24 @@
 
 //testing
 #include "testing/rampPWM.hpp"
+#include "PWM/PWMUtils.hpp"
 
 //init globals here'
-const uint8_t  ledcMap[]    =   {LEDC_MAP};
+#ifdef LEDC_MAP
+const uint8_t  ledcMap[]     =   {LEDC_MAP};
+#else
+const uint8_t ledcMap[]      = {0};
+#endif
+
+#ifdef PCA_MAP
 const uint8_t  pcaMap[]     =   {PCA_MAP};
+#else
+const uint8_t pcaMap[]      = {0};
+#endif
+
 const uint8_t  pcaMapLen    =   sizeof(pcaMap) / sizeof(pcaMap[0]);
 const uint8_t  ledcMapLen    =  sizeof(ledcMap) / sizeof(ledcMap[0]);
-const uint8_t  totalMotors   =  ledcMapLen + pcaMapLen;
+const uint8_t  totalMotors   =   ledcMapLen + pcaMapLen;
 
 uint16_t allMotorVals[totalMotors]  = {0};
 uint16_t ledcMotorVals[ledcMapLen]  = {0};
@@ -41,14 +52,15 @@ void loop() {
   setLedcDuty();
   setPcaDuty();
 
-  //rampTesting(); //uncomment this to continually ramp up and down 
+  // rampTesting(); //uncomment this to continually ramp up and down 
   // (USED FOR MOTOR TESTING)
   
   ticks += 1;
   if (millis()-start >= 1000) {
     Serial.print("Loop/sec: ");
     Serial.println(ticks);
-    //printMotorDuty();
+    printMotorDuty();
+    printRawPacket();
 
     start = millis();
     ticks = 0;

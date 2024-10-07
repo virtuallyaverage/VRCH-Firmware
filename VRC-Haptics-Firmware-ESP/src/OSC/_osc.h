@@ -23,8 +23,9 @@ uint32_t recvPort = RECIEVE_PORT;
 
 #ifdef ROLE_VEST
 const String mdnsName = "vest";
-#elif ROLE_HEAD
-const String mdnsName = "Haptic_Head";
+#endif
+#ifdef ROLE_HEAD
+const String mdnsName = "head";
 #endif
 
 void StartMDNS();
