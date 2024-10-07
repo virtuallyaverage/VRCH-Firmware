@@ -78,6 +78,7 @@ void handlePing(const OscMessage& message){
     // Respond to ping
     OscMessage pingResponse(PING_ADDRESS);
     pingResponse.pushInt32(RECIEVE_PORT);
+    pingResponse.pushString(WiFi.macAddress());
     oscClient.send(hostIP, sendPort, pingResponse);
 
     if (!heartbeatPublisher){
