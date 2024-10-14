@@ -7,15 +7,15 @@
 #define WIFI_PASSWORD "95815480"
 
 //device role
-#define ROLE_HEAD
-//#define ROLE_VEST
+//#define ROLE_HEAD
+#define ROLE_VEST
 
 /// ******************************* Advanced Configuration *********************
 
 
 //PCA Module Pins
-#define SDA_PIN -1
-#define SCL_PIN -1
+#define SDA_PIN 8
+#define SCL_PIN 9
 /**
  * -1, -1 for default (marked) pins on boards
  * ESP32C3 super Mini: 8, 9

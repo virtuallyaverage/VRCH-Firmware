@@ -52,7 +52,7 @@ void loop() {
   setLedcDuty();
   setPcaDuty();
 
-  // rampTesting(); //uncomment this to continually ramp up and down 
+  rampTesting(); //uncomment this to continually ramp up and down 
   // (USED FOR MOTOR TESTING)
   
   ticks += 1;
