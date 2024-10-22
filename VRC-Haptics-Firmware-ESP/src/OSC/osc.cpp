@@ -16,7 +16,6 @@ void WirelessStart() {
     
     // Wait for connection
     while (WiFi.status() != WL_CONNECTED) {
-        //Serial.println("");
         delay(1); // needed for esp8266
     }
 
@@ -57,7 +56,7 @@ void StartHeartBeat() {
 
     // Publish heart beat on one second intervals
     OscWiFi.publish(hostIP, sendPort, HEARTBEAT_ADDRESS, &millis, selfIP, selfMac) 
-    -> setFrameRate(1);
+        -> setFrameRate(1);
     heartbeatPublisher = OscWiFi.getPublishElementRef(hostIP, sendPort, HEARTBEAT_ADDRESS);
 
     if (!heartbeatPublisher) {
@@ -66,11 +65,8 @@ void StartHeartBeat() {
 }
 
 void handlePing(const OscMessage& message){
-    if(!hostIP.isEmpty()) {
-        LOG_WARN(F("Ping recieved from server but IP is not empty"));
-        return;
-    }
-
+    //if we recieve a ping and we were already setup, it is likely a server restart. 
+    //In that case the port, ip, and other values should be reinited
 
     sendPort = message.arg<uint16_t>(0);  // Get the host's port from the message
     hostIP = message.remoteIP();  // Get the host's IP address

@@ -8,9 +8,7 @@
 
 //device role
 //#define ROLE_HEAD
-//#define ROLE_VEST
-//#define ROLE_VEST_F
-#define ROLE_VEST_B
+#define ROLE_VEST
 
 /// ******************************* Advanced Configuration *********************
 
@@ -25,7 +23,7 @@
 
 #ifndef ROLE_HEAD
 #ifndef ROLE_VEST
-#pragma message ("No presets are selected. This is fine as long as a custom ledc or PCA map is defined.")
+#pragma message ("No presets are selected. This is fine as long as a custom defined ledc or PCA map is defined.")
 #endif
 #endif 
 
@@ -40,22 +38,7 @@
 #error "Both ROLE_VEST and ROLE_HEAD are uncommented"
 #endif
 
-#define PCA_MAP 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-#endif
-
-//stuff to do if split vest configured
-#if defined(ROLE_VEST_F)
-#ifdef ROLE_HEAD
-#error "Both ROLE_VEST and ROLE_HEAD are uncommented"
-#endif
-#define PCA_MAP 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-#endif
-
-#if defined(ROLE_VEST_B)
-#ifdef ROLE_HEAD
-#error "Both ROLE_VEST and ROLE_HEAD are uncommented"
-#endif
-#define PCA_MAP 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+#define PCA_MAP 15, 14, 1, 0, 13, 12, 3, 2, 8, 9, 5, 6, 10, 11, 7, 4, 25,24,16,17,27,26,18,19,29,30,22,21,28,31,20,23
 #endif
 
 //IGNORE ME

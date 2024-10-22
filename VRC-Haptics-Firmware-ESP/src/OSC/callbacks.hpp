@@ -18,21 +18,23 @@ inline void printRaw() {
 
 inline void updateMotorVals(){
     for (uint8_t i = 0; i < totalMotors; i++) {
-        if (i < ledcMapLen-1) {
+        pcaMotorVals[i] = allMotorVals[i];
+        continue;
+        if (i < ledcMapLen) {
             ledcMotorVals[i] = allMotorVals[i];
-        } else if (i < (totalMotors)) { //must be greater than ledc motors, but not more than the combined total of motors
-            pcaMotorVals[i-ledcMapLen] = allMotorVals[i]; //assign to offset array
         } else {
-            LOG_ERROR(F("More motors served than configured: "), i);
+            #ifndef LEDC_MAP
+            pcaMotorVals[i-ledcMapLen] = allMotorVals[i]; //assign to offset array
+            #else 
+            pcaMotorVals[i-ledcMapLen] = allMotorVals[i]; //assign to offset array
+            #endif
         }
-        
     }
-    
 }
 
 void motorMessage_callback(const OscMessage& message){
     if (first_packet){
-        Serial.println("FIRST PACKET");
+        LOG_INFO("FIRST PACKET");
         first_packet = false;
     }
 
