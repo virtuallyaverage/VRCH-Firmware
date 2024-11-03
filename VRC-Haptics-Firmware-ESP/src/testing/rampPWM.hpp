@@ -12,11 +12,11 @@ void setMotorArray(uint16_t state) {
 void rampTesting() {
   LOG_INFO("Entering Motor Ramp");
   for (uint16_t state = 0; state < 1024; state++) {
-    setMotorArray(state);
+    setAllPcaDuty(state*4);
     delay(1);
   }
   for (uint16_t state = 1024; state > 0; state--) {
-    setMotorArray(state);
+    setAllPcaDuty(state*4);
     delay(1);
   }
 }

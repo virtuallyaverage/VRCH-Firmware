@@ -48,14 +48,16 @@
 #ifdef ROLE_HEAD
 #error "Both ROLE_VEST and ROLE_HEAD are uncommented"
 #endif
-#define PCA_MAP 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+#define PCA_MAP 0, 3, 14, 15, 1, 2, 12, 13, 7, 6, 9, 8, 5, 4, 11, 10
+//#define PCA_MAP 0, 3, 14, 15, 1, 2, 14, 15, 7, 6, 9, 8, 5, 4, 11, 10
 #endif
 
 #if defined(ROLE_VEST_B)
 #ifdef ROLE_HEAD
 #error "Both ROLE_VEST and ROLE_HEAD are uncommented"
 #endif
-#define PCA_MAP 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+//#define PCA_MAP 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+#define PCA_MAP 6, 7, 15, 14, 4, 5, 13, 12, 9, 9, 8, 9, 9, 9, 9, 9
 #endif
 
 //IGNORE ME
