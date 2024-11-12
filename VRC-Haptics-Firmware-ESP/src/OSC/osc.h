@@ -7,7 +7,7 @@
 #define MOTOR_ADDRESS "/h"
 
 #define MDNS_SERVICE_NAME "haptics"
-#define MDNS_SERVICE_PROTOCOL "osc"
+#define MDNS_SERVICE_PROTOCOL "udp"
 
 void WirelessStart();
 bool WiFiConnected();

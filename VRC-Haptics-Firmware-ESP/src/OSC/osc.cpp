@@ -10,6 +10,9 @@ void printRawPacket() {
 void WirelessStart() {
     LOG_SET_LEVEL(DebugLogLevel::LVL_TRACE);
 
+    WiFi.mode(WIFI_STA);
+    WiFi.setSleep(false); // thanks Daky
+
     // Start WiFi connection
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     LOG_INFO("WIFI: Connecting");
@@ -32,9 +35,14 @@ void WirelessStart() {
 }
 
 void StartMDNS() {
+    //close any previous entries
+    MDNS.end();
+    delay(100);
+
     // Start mDNS service
     if (MDNS.begin(mdnsName)) {
         MDNS.addService(MDNS_SERVICE_NAME, MDNS_SERVICE_PROTOCOL, RECIEVE_PORT);  // Advertise the service
+        MDNS.addServiceTxt(MDNS_SERVICE_NAME, MDNS_SERVICE_PROTOCOL, "MAC", WiFi.macAddress());
         LOG_INFO("WIFI: mDNS service started");
 
     } else {

@@ -23,9 +23,13 @@
  * ESP32C3 super Mini: 8, 9
 */
 
-#ifndef ROLE_HEAD
+#ifndef ROLE_HEAD //I hate how I did this
 #ifndef ROLE_VEST
+#ifndef ROLE_VEST_F
+#ifndef ROLE_VEST_B
 #pragma message ("No presets are selected. This is fine as long as a custom ledc or PCA map is defined.")
+#endif
+#endif 
 #endif
 #endif 
 
@@ -49,7 +53,7 @@
 #error "Both ROLE_VEST and ROLE_HEAD are uncommented"
 #endif
 #define PCA_MAP 0, 3, 14, 15, 1, 2, 12, 13, 7, 6, 9, 8, 5, 4, 11, 10
-//#define PCA_MAP 0, 3, 14, 15, 1, 2, 14, 15, 7, 6, 9, 8, 5, 4, 11, 10
+//#define PCA_MAP 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 #endif
 
 #if defined(ROLE_VEST_B)
