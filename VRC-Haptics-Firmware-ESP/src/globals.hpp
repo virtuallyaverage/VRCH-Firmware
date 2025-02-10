@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Arduino.h"
-#include "config.hpp"
 
 //calcualte map variables
 extern const  uint8_t  ledcMap[];

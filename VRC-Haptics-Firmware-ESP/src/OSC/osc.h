@@ -1,15 +1,40 @@
-/// @brief public functions for the osc.cpp file
+#include <ArduinoOSCWiFi.h>
+#include <ESPmDNS.h>
+#include <WiFi.h>
 
-#define RECIEVE_PORT 1027
+#include "software_defines.h"
+#include "globals.hpp"
+#include "config/config.h"
 
-#define HEARTBEAT_ADDRESS "/hrtbt"
-#define PING_ADDRESS "/ping"
-#define MOTOR_ADDRESS "/h"
+#ifndef OSC_H
+#define OSC_H
 
-#define MDNS_SERVICE_NAME "haptics"
-#define MDNS_SERVICE_PROTOCOL "udp"
+namespace Haptics {
+namespace Wireless {
 
-void WirelessStart();
+// OSC client to send messages back to the hosts
+OscWiFiClient oscClient;
+
+//publisher references
+OscPublishElementRef heartbeatPublisher;
+
+// we need to get host ip first
+String selfIP = "";
+String selfMac = WiFi.macAddress();
+String hostIP = "";
+uint32_t sendPort = 0;
+uint32_t recvPort = RECIEVE_PORT;
+
+void StartMDNS(Config *conf);
+void StartHeartBeat();
+void handlePing(const OscMessage& message);
+
+void Start(Config *conf);
 bool WiFiConnected();
-void WirelessTick();
+void Tick();
 void printRawPacket();
+
+} // namespace Wireless
+} // namespace Haptics
+
+#endif // OSC_H

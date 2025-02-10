@@ -1,13 +1,7 @@
-#include <Arduino.h>
-
-#include "config.hpp"
-#include "globals.hpp"
-
 #include "pca.h"
-#include "macros.h"
 
-#include "Adafruit_PWMServoDriver.h"
-#include <vector> // I give up trying to get the other method working
+namespace Haptics {
+namespace PCA {
 
 Adafruit_PWMServoDriver pcaModule1 = Adafruit_PWMServoDriver(PCA_1, Wire);//, Wire);
 Adafruit_PWMServoDriver pcaModule2 = Adafruit_PWMServoDriver(PCA_2, Wire);//, Wire);
@@ -18,22 +12,24 @@ bool secondPCAConnected = false;
 std::vector<uint16_t> debounceBuffer(pcaMapLen, 0);  // Dynamically sized array
 
 /// @brief Start pca module communication
-void startPCA() {
-  Wire.begin(SDA_PIN, SCL_PIN, I2C_CLOCK);
+void start(Config *conf) {
+  logger.setTag("PCA");
+
+  Wire.begin(conf->i2c_sda, conf->i2c_scl, conf->i2c_speed);
 
   // init modules
   if (pcaModule1.begin()) {
-    LOG_INFO("PCA1 Connected");
+    logger.debug("PCA1 Connected");
     firstPCAConnected = true;
   } else {
-    LOG_INFO("PCA1 Not Connected");
+    logger.debug("PCA1 Not Connected");
   }
 
   if (pcaModule2.begin()) {
-    LOG_INFO("PCA2 Connected");
+    logger.debug("PCA2 Connected");
     secondPCAConnected = true;
   } else {
-    LOG_INFO("PCA2 Not Found");
+    logger.debug("PCA2 Not Found");
   }
 
   // init modules
@@ -48,17 +44,17 @@ void startPCA() {
   if(firstPCAConnected) {
     pcaModule1.setPWMFreq(PCA_FREQUENCY);
     pcaModule1.setOscillatorFrequency(27000000);
-    LOG_DEBUG("PCA1 Prescale set to:", pcaModule1.readPrescale());
+    logger.debug("PCA1 Prescale set to:", pcaModule1.readPrescale());
   }
 
   if (secondPCAConnected) {
     pcaModule2.setPWMFreq(PCA_FREQUENCY);
     pcaModule2.setOscillatorFrequency(27000000);
-    LOG_DEBUG("PCA2 Prescale set to:", pcaModule2.readPrescale());
+    logger.debug("PCA2 Prescale set to:", pcaModule2.readPrescale());
   }
 
   //chime
-  LOG_INFO("Starting Chime");
+  logger.debug("Starting Chime");
   setAllPcaDuty(4095);
   delay(100);
   setAllPcaDuty(0);
@@ -105,3 +101,7 @@ void setPCAMotorDuty(uint8_t motorIndex, uint16_t dutyCycle){
     }
   }
 }
+
+} // namespace PCA
+} // namespace Haptics
+

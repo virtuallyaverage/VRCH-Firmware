@@ -1,29 +1,19 @@
-#pragma once
-#include <Arduino.h>
-#include <esp32-hal-ledc.h>
+#include "ledc.h"
 
-#include "config.hpp"
-#include "globals.hpp"
-#include "macros.h"
-
-//defaults from senseshift (THANKS! :-) )
-#define LEDC_FREQUENCY 60
-#define LEDC_RESOLUTION 12
+namespace Haptics {
+namespace LEDC {
+Logging::Logger logger;
 
 inline int setChannel(const uint8_t channel, const uint16_t duty){
-    #ifndef LEDC_MAP
-    return 1;
-    #endif
+    //TODO: FIXME
 
     ledcWrite(channel, duty);
-    //LOG_DEBUG("Set Channel: ", channel, " to duty:", duty);
+    //logger.debug("Set Channel: ", channel, " to duty:", duty);
     return 0;
 }
 
 int setAllLedcDuty(const uint16_t duty) {
-    #ifndef LEDC_MAP
-    return 1;
-    #endif
+    // TODO: FIX THESE
 
     for (int i = 0; i < ledcMapLen; i++) {
         setChannel(i, duty);
@@ -32,9 +22,7 @@ int setAllLedcDuty(const uint16_t duty) {
 }
 
 int setLedcDuty() {
-    #ifndef LEDC_MAP
-    return 1;
-    #endif
+    // TODO: FIX THESE
 
     for (uint8_t i = 0; i < ledcMapLen; i++) {
         setChannel(i, ledcMotorVals[i]);
@@ -43,16 +31,15 @@ int setLedcDuty() {
     return 0;
 }
 
-int startLEDC() {
-    #ifndef LEDC_MAP
-    return 1; //avoid errors by returning early (hacky)
-    #endif
+int start() {
+    logger.setTag("LEDC");
 
+    // TODO: FIX THESE
     for (uint8_t i = 0; i < ledcMapLen; i++) {
         ledcSetup(i, LEDC_FREQUENCY, LEDC_RESOLUTION);
         pinMode(ledcMap[i], OUTPUT);
         ledcAttachPin(ledcMap[i], i);
-        LOG_DEBUG("Setting pin: ", ledcMap[i], "to output, on channel:", i);
+        logger.debug("Setting pin: ", ledcMap[i], "to output, on channel:", i);
     }
 
     //chime
@@ -62,3 +49,6 @@ int startLEDC() {
 
     return 0;
 }
+
+} // namespace LEDC
+} // namespace Haptics
