@@ -37,7 +37,7 @@ namespace Wireless {
 
     void motorMessage_callback(const OscMessage& message){
         if (first_packet){
-            LOG_INFO("FIRST PACKET");
+            logger.debug("FIRST PACKET");
             first_packet = false;
         }
 

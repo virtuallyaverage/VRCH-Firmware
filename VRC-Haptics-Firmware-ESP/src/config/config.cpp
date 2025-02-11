@@ -9,6 +9,8 @@
 
 namespace Haptics {
 
+    Logging::Logger logger("Haptics");
+
     // Load configuration or init to defaults
     void loadConfig(Config* conf) {
         // If the config file doesn't exist, write default configuration
@@ -50,9 +52,46 @@ namespace Haptics {
         // If the file exists, read and parse it
         File configFile = LittleFS.open("/config.json", "r");
         if (configFile) {
+            logger.debug("Loaded config");
             DynamicJsonDocument doc(JSON_SIZE);
             DeserializationError error = deserializeJson(doc, configFile);
             if (!error) {
+                // Check the version
+                uint16_t fileVersion = doc["config_version"] | 0;
+                if (fileVersion < defaultConfig.config_version || fileVersion == 0) {
+                    Serial.println("Config version is outdated. Updating to defaults.");
+                    // Overwrite with new defaults. TODO: Merge changed defaults?
+                    File configFileWrite = LittleFS.open("/config.json", "w");
+                    if (configFileWrite) {
+                        doc.clear();
+                        doc["wifi_ssid"] = defaultConfig.wifi_ssid;
+                        doc["wifi_password"] = defaultConfig.wifi_password;
+                        doc["i2c_scl"] = defaultConfig.i2c_scl;
+                        doc["i2c_sda"] = defaultConfig.i2c_sda;
+                        doc["i2c_speed"] = defaultConfig.i2c_speed;
+                        doc["motor_map_i2c_num"] = defaultConfig.motor_map_i2c_num;
+                        JsonArray motorMapI2cArray = doc.createNestedArray("motor_map_i2c");
+                        for (int i = 0; i < defaultConfig.motor_map_i2c_num; i++) {
+                            motorMapI2cArray.add(defaultConfig.motor_map_i2c[i]);
+                        }
+                        doc["motor_map_ledc_num"] = defaultConfig.motor_map_ledc_num;
+                        JsonArray motorMapLedcArray = doc.createNestedArray("motor_map_ledc");
+                        for (int i = 0; i < defaultConfig.motor_map_ledc_num; i++) {
+                            motorMapLedcArray.add(defaultConfig.motor_map_ledc[i]);
+                        }
+                        doc["mdns_name"] = defaultConfig.mdns_name;
+                        doc["config_version"] = defaultConfig.config_version;
+                        
+                        serializeJson(doc, configFileWrite);
+                        configFileWrite.close();
+                        memcpy(conf, &defaultConfig, sizeof(Config));
+                        configFile.close();
+                        return;
+                    } else {
+                        Serial.println("Failed to update config file");
+                    }
+                }
+
                 // Load WiFi settings (using defaults if missing)
                 const char* ssid = doc["wifi_ssid"] | defaultConfig.wifi_ssid;
                 const char* password = doc["wifi_password"] | defaultConfig.wifi_password;
@@ -99,6 +138,7 @@ namespace Haptics {
                 // Load mdns_name
                 const char* mdnsName = doc["mdns_name"] | defaultConfig.mdns_name;
                 strncpy(conf->mdns_name, mdnsName, sizeof(conf->mdns_name));
+                doc["config_version"] = defaultConfig.config_version;
             } else {
                 Serial.println("Failed to parse config file, using default config.");
                 memcpy(conf, &defaultConfig, sizeof(Config));

@@ -5,6 +5,7 @@
 #include "software_defines.h"
 #include "globals.h"
 #include "config/config.h"
+#include "logging/Logger.h"
 
 #ifndef OSC_H
 #define OSC_H
@@ -24,6 +25,8 @@ inline String selfMac = WiFi.macAddress();
 inline String hostIP = "";
 inline uint32_t sendPort = 0;
 inline uint32_t recvPort = RECIEVE_PORT;
+
+inline Logging::Logger logger("WIFI");
 
 void StartMDNS(Config *conf);
 void StartHeartBeat();

@@ -18,12 +18,13 @@ namespace Haptics {
         uint16_t motor_map_i2c[MAX_I2C_MOTORS]; // needs to be an array
         uint16_t motor_map_ledc_num;
         uint16_t motor_map_ledc[MAX_LEDC_MOTORS]; // needs to be an array
+        uint16_t config_version;
     };
 
     // sensible defaults
     const Config defaultConfig = {
-    "CHANGE_ME", //ssid
-    "CHANGE_ME", //password
+    "SlimeServer", //ssid
+    "95815480", //password
     "VRCHaptics", // name that will be displayed on the gui
     SCL, // scl default of board
     SDA, // sda default of board
@@ -32,6 +33,7 @@ namespace Haptics {
     {0}, 
     0,
     {0},
+    CONFIG_VERSION,
     };
 
     void loadConfig(Config* conf);

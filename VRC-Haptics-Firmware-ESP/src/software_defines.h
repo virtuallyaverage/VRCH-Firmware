@@ -1,6 +1,10 @@
 #ifndef SOFTWARE_DEFINES_H
 #define SOFTWARE_DEFINES_H
 
+/// Almost all numbers an constants should end up here
+// zero = dev mode 
+#define CONFIG_VERSION 0
+
 /// Motor defines (define JSON_SIZE if more than 128 total)
 #define MAX_I2C_MOTORS  64
 #define MAX_LEDC_MOTORS 64

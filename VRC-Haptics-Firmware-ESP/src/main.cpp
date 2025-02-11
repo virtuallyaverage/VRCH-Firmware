@@ -54,7 +54,7 @@ void loop() {
   
   ticks += 1;
   if (millis() - startMillis >= 1000) {
-    LOG_INFO("Loop/sec: ", ticks);
+    logger.debug("Loop/sec: %d", ticks);
     Haptics::PwmUtils::printAllDuty();
     Haptics::Wireless::printRawPacket();
 

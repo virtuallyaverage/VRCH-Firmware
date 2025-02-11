@@ -13,7 +13,7 @@ namespace PwmUtils {
 
   /// @brief Ramp PCA pwm up and down for testing
   void rampTesting() {
-    LOG_INFO("Entering Motor Ramp");
+    Serial.println("Entering Motor Ramp");
     for (uint16_t state = 0; state < 1024; state++) {
       PCA::setAllPcaDuty(state*4, &Haptics::conf);
       delay(1);

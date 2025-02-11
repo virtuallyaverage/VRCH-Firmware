@@ -5,9 +5,10 @@
 #include "globals.h"
 #include "osc.h"
 #include "software_defines.h"
+#include "logging/Logger.h"
 
 namespace Haptics  {
-namespace Wireless { 
+namespace Wireless {
     void printRaw();
     inline void updateMotorVals(Globals *globals, Config *conf);
     void motorMessage_callback(const OscMessage& message);
