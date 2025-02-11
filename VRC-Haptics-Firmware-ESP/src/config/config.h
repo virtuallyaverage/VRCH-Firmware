@@ -36,8 +36,8 @@ namespace Haptics {
     CONFIG_VERSION,
     };
 
-    void loadConfig(Config* conf);
-    void saveConfig(Config* conf);
+    void loadConfig();
+    void saveConfig();
 
     inline Config conf;
 

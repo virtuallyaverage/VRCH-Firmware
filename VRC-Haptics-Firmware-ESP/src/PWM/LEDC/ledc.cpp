@@ -27,18 +27,20 @@ int setLedcDuty(Globals *globals, Config *conf) {
 }
 
 int start(Config *conf) {
-
     uint16_t ledcMapLen = conf->motor_map_ledc_num;
 
-    // TODO: FIX THESE
     for (uint8_t i = 0; i < ledcMapLen; i++) {
+        // Stop the channel if it was previously configured.
+        ledcDetachPin(i);
+        
+        // Reinitialize the channel.
         ledcSetup(i, LEDC_FREQUENCY, LEDC_RESOLUTION);
         pinMode(conf->motor_map_ledc[i], OUTPUT);
         ledcAttachPin(conf->motor_map_ledc[i], i);
-        logger.debug("Setting pin: ", conf->motor_map_ledc[i], "to output, on channel:", i);
+        logger.trace("Setting pin: %d to output on channel: %d", conf->motor_map_ledc[i], i);
     }
 
-    //chime
+    // Chime: ramp up and down
     setAllLedcDuty(4095, conf);
     delay(100);
     setAllLedcDuty(0, conf);

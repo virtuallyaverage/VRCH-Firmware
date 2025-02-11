@@ -24,7 +24,7 @@ namespace PwmUtils {
     }
 
     void printPCADuty() {
-        if (!conf.motor_map_ledc_num) {
+        if (!conf.motor_map_i2c_num) {
             return;
         }
 

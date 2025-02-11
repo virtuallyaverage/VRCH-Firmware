@@ -7,17 +7,11 @@
 #include "config/config.h"
 #include "logging/Logger.h"
 
-// switch between board imports
-#ifdef BOARD_ESP32C3_SUPERMINI
-#include "boards/esp32c3-supermini.h"
-#else 
-#include "boards/default.h"
-#endif
-
 // import modules
 #include "OSC/osc.h"
 #include "PWM/PCA/pca.h"
 #include "PWM/LEDC/ledc.h"
+#include "serial/serial.h"
 
 // testing
 #include "testing/rampPWM.hpp"
@@ -29,12 +23,19 @@ Haptics::Logging::Logger logger("Main");
 void setup() {
   Serial.begin(115200);
 
+  #ifdef DEV_MODE
+  //wait for serial if we are developing
+  delay(700);
+  #endif
+
   // Initialize LittleFS
   if (!LittleFS.begin(true)) {
     logger.error("LittleFS mount failed, please restart");
     return;
   }
-  Haptics::loadConfig(&Haptics::conf);
+
+
+  Haptics::loadConfig();
   Haptics::initGlobals();
 
   Haptics::Wireless::Start(&Haptics::conf);
@@ -46,9 +47,16 @@ uint32_t ticks = 0;
 unsigned long startMillis = millis();
 
 void loop() {
+  if (Haptics::globals.reinitLEDC == true) { // prevents not defined error
+    Haptics::LEDC::start(&Haptics::conf);
+    logger.debug("Restarted LEDC");
+    Haptics::globals.reinitLEDC = false;
+  }
+
   Haptics::Wireless::Tick();
   Haptics::LEDC::setLedcDuty(&Haptics::globals, &Haptics::conf);
   Haptics::PCA::setPcaDuty(&Haptics::globals, &Haptics::conf);
+  Haptics::SerialComm::tick();
 
   // rampTesting(); // uncomment this to continually ramp up and down (USED FOR MOTOR TESTING)
   

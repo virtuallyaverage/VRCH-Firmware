@@ -21,14 +21,14 @@ void start(Config *conf) {
     logger.debug("PCA1 Connected");
     firstPCAConnected = true;
   } else {
-    logger.debug("PCA1 Not Connected");
+    logger.warn("PCA1 Not Connected");
   }
 
   if (pcaModule2.begin()) {
     logger.debug("PCA2 Connected");
     secondPCAConnected = true;
   } else {
-    logger.debug("PCA2 Not Found");
+    logger.warn("PCA2 Not Found");
   }
 
   // init modules
@@ -43,13 +43,13 @@ void start(Config *conf) {
   if(firstPCAConnected) {
     pcaModule1.setPWMFreq(PCA_FREQUENCY);
     pcaModule1.setOscillatorFrequency(27000000);
-    logger.debug("PCA1 Prescale set to:", pcaModule1.readPrescale());
+    logger.warn("PCA1 Prescale set to:", pcaModule1.readPrescale());
   }
 
   if (secondPCAConnected) {
     pcaModule2.setPWMFreq(PCA_FREQUENCY);
     pcaModule2.setOscillatorFrequency(27000000);
-    logger.debug("PCA2 Prescale set to:", pcaModule2.readPrescale());
+    logger.warn("PCA2 Prescale set to:", pcaModule2.readPrescale());
   }
 
   //chime

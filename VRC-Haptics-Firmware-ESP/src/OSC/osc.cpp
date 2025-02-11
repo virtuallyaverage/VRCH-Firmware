@@ -16,7 +16,7 @@ namespace Wireless
     
         // Start WiFi connection
         WiFi.begin(conf->wifi_ssid, conf->wifi_password);
-        logger.debug("WIFI: Connecting");
+        logger.debug("Connecting to: %s", conf->wifi_ssid);
         
         // Wait for connection
         while (WiFi.status() != WL_CONNECTED) {
@@ -25,11 +25,11 @@ namespace Wireless
     
         // Print the IP address
         selfIP = WiFi.localIP().toString();
-        logger.debug("Wifi Connected:", selfIP);
+        logger.debug("Connected @ %s", selfIP);
     
         // Start listening for OSC server
         OscWiFi.subscribe(RECIEVE_PORT, PING_ADDRESS, &handlePing);
-        logger.debug("WIFI: OSC: server started on port:", RECIEVE_PORT);
+        logger.debug("WIFI: OSC: server started on port: %d", RECIEVE_PORT);
     
         StartMDNS(conf);// NEEDS TO BE AFTER SUBSCRIBER SET UP
         
@@ -83,7 +83,7 @@ namespace Wireless
         //create our own recieving server
         OscWiFi.subscribe(RECIEVE_PORT, MOTOR_ADDRESS, &motorMessage_callback);
     
-        logger.debug("Received ping from:", hostIP);
+        logger.debug("Received ping from: %s", hostIP);
     
         //sending client
         oscClient = OscWiFi.getClient();

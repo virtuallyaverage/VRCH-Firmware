@@ -10,10 +10,12 @@ namespace Haptics {
         uint16_t ledcMotorVals[MAX_LEDC_MOTORS];
         uint16_t pcaMotorVals[MAX_I2C_MOTORS];
         uint16_t allMotorVals[MAX_LEDC_MOTORS + MAX_I2C_MOTORS];
+        bool reinitLEDC;
     };
 
     inline Globals initGlobals() {
         Globals g = {};
+        g.reinitLEDC = false;
         return g;
     }
 

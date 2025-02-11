@@ -1,9 +1,7 @@
 #ifndef SOFTWARE_DEFINES_H
 #define SOFTWARE_DEFINES_H
 
-/// Almost all numbers an constants should end up here
-// zero = dev mode 
-#define CONFIG_VERSION 0
+/// Almost all numbers and constants should end up here
 
 /// Motor defines (define JSON_SIZE if more than 128 total)
 #define MAX_I2C_MOTORS  64
@@ -30,7 +28,8 @@
 #define MDNS_SERVICE_PROTOCOL "udp"
 
 // internal (calculated for 64 motors on each)
-#define JSON_SIZE 3072
+#define JSON_SIZE 4096
 
+#define CONFIG_VERSION 1
 
 #endif // Software defines
