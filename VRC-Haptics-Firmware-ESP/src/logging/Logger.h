@@ -5,7 +5,8 @@
 
 #include "Level.h"
 
-#define LOG_LEVEL LOG_LEVEL_DEBUG //TODO: Manage this correctly
+#define LOG_LEVEL LOG_LEVEL_DEBUG 
+//TODO: Manage this correctly
 
 namespace Haptics {
 namespace Logging {

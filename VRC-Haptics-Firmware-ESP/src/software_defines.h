@@ -1,16 +1,18 @@
 #ifndef SOFTWARE_DEFINES_H
 #define SOFTWARE_DEFINES_H
 
-/// Motor defines
+/// Motor defines (define JSON_SIZE if more than 128 total)
 #define MAX_I2C_MOTORS  64
 #define MAX_LEDC_MOTORS 64
 
-#define PCA_FREQUENCY 1500 // pwm frequency of pca motors
+// pwm frequency of pca motors
+#define PCA_FREQUENCY 1500 
 #define PCA_1 0x40 
 #define PCA_2 0x41
 
-#define LEDC_FREQUENCY 60 //defaults from senseshift
-#define LEDC_RESOLUTION 12 //defaults from senseshift
+/// defaults from senseshift
+#define LEDC_FREQUENCY 60 
+#define LEDC_RESOLUTION 12
 
 /// Wireless defines
 #define OSC_MOTOR_CHAR_NUM 4
@@ -22,6 +24,9 @@
 
 #define MDNS_SERVICE_NAME "haptics"
 #define MDNS_SERVICE_PROTOCOL "udp"
+
+// internal (calculated for 64 motors on each)
+#define JSON_SIZE 3072
 
 
 #endif // Software defines

@@ -2,8 +2,8 @@
 #include "Wire.h"
 #include "LittleFS.h"
 
-//main config files
-#include "globals.hpp"
+// main config files
+#include "globals.h"
 #include "config/config.h"
 #include "logging/Logger.h"
 
@@ -14,28 +14,19 @@
 #include "boards/default.h"
 #endif
 
-//import modules
+// import modules
 #include "OSC/osc.h"
 #include "PWM/PCA/pca.h"
 #include "PWM/LEDC/ledc.h"
 
-//testing
+// testing
 #include "testing/rampPWM.hpp"
 #include "PWM/PWMUtils.hpp"
 
-namespace Haptics {
-
-uint16_t allMotorVals[totalMotors]  = {0};
-uint16_t ledcMotorVals[ledcMapLen]  = {0};
-uint16_t pcaMotorVals[pcaMapLen]    = {0};
-
-// configuration struct
-Config conf;
-Logging::Logger logger;
-
+// Global Logger instance
+Haptics::Logging::Logger logger("Main");
 
 void setup() {
-  logger.setTag("Main");
   Serial.begin(115200);
 
   // Initialize LittleFS
@@ -43,33 +34,31 @@ void setup() {
     logger.error("LittleFS mount failed, please restart");
     return;
   }
-  loadConfig(&conf);
+  Haptics::loadConfig(&Haptics::conf);
+  Haptics::initGlobals();
 
-  Wireless::Start(&conf);
-  PCA::start(&conf);
-  LEDC::start();
+  Haptics::Wireless::Start(&Haptics::conf);
+  Haptics::PCA::start(&Haptics::conf);
+  Haptics::LEDC::start(&Haptics::conf);
 }
 
 uint32_t ticks = 0;
-unsigned long start = millis();
+unsigned long startMillis = millis();
+
 void loop() {
+  Haptics::Wireless::Tick();
+  Haptics::LEDC::setLedcDuty(&Haptics::globals, &Haptics::conf);
+  Haptics::PCA::setPcaDuty(&Haptics::globals, &Haptics::conf);
 
-  Wireless::Tick();
-  LEDC::setLedcDuty();
-  PCA::setPcaDuty();
-
-  //rampTesting(); //uncomment this to continually ramp up and down 
-  // (USED FOR MOTOR TESTING)
+  // rampTesting(); // uncomment this to continually ramp up and down (USED FOR MOTOR TESTING)
   
   ticks += 1;
-  if (millis()-start >= 1000) {
+  if (millis() - startMillis >= 1000) {
     LOG_INFO("Loop/sec: ", ticks);
-    PwmUtils::printAllDuty();
-    Wireless::printRawPacket();
+    Haptics::PwmUtils::printAllDuty();
+    Haptics::Wireless::printRawPacket();
 
-    start = millis();
+    startMillis = millis();
     ticks = 0;
   }
-
 }
-} // namespace Haptics

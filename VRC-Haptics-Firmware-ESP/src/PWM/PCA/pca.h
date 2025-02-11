@@ -2,8 +2,7 @@
 #include "Adafruit_PWMServoDriver.h"
 #include <vector> // I give up trying to get the other method working
 
-#include "globals.hpp"
-#include "macros.h"
+#include "globals.h"
 #include "software_defines.h"
 #include "config/config.h"
 #include "logging/Logger.h"
@@ -15,12 +14,11 @@
 
 namespace Haptics {
 namespace PCA {
-    Logging::Logger logger;
 
     void start(Config *conf);
     void setPCAMotorDuty(uint8_t motorIndex, uint16_t dutyCycle);
-    void setPcaDuty();
-    void setAllPcaDuty(uint16_t duty);
+    void setPcaDuty(Globals *globals, Config *conf);
+    void setAllPcaDuty(uint16_t duty, Config *conf);
 } // namespace PCA
 } // namespace Haptics
 

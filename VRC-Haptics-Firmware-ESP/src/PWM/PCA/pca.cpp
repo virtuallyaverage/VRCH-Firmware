@@ -9,12 +9,11 @@ Adafruit_PWMServoDriver pcaModule2 = Adafruit_PWMServoDriver(PCA_2, Wire);//, Wi
 bool firstPCAConnected = false;
 bool secondPCAConnected = false;
 
-std::vector<uint16_t> debounceBuffer(pcaMapLen, 0);  // Dynamically sized array
+uint16_t debounceBuffer[MAX_I2C_MOTORS];
+Logging::Logger logger("I2C");
 
 /// @brief Start pca module communication
 void start(Config *conf) {
-  logger.setTag("PCA");
-
   Wire.begin(conf->i2c_sda, conf->i2c_scl, conf->i2c_speed);
 
   // init modules
@@ -55,22 +54,22 @@ void start(Config *conf) {
 
   //chime
   logger.debug("Starting Chime");
-  setAllPcaDuty(4095);
+  setAllPcaDuty(4095, conf);
   delay(100);
-  setAllPcaDuty(0);
+  setAllPcaDuty(0, conf);
 }
 
-/// @brief Sets PCA motors to the values from the pcaMotorVals array
-void setPcaDuty() {
+/// @brief Sets PCA motors to the values from the global variables
+void setPcaDuty(Globals *globals, Config *conf) {
     for(uint8_t i = 0; i < 16; i++) {
-        const uint16_t value = pcaMotorVals[i];
-        const uint16_t value2 = pcaMotorVals[i+16];
+        const uint16_t value = globals->pcaMotorVals[i];
+        const uint16_t value2 = globals->pcaMotorVals[i+16];
         if (value != debounceBuffer[i] && firstPCAConnected) {
-          pcaModule1.setPin(pcaMap[i], value);
+          pcaModule1.setPin(conf->motor_map_i2c[i], value);
           debounceBuffer[i] = value;
         }
         if (value2 != debounceBuffer[i+16] && secondPCAConnected) { //only send to second if it is connected
-          pcaModule2.setPin(pcaMap[i+16]-16, value2);// 3 HOURS JUST TO FIND THE -16..... I WANT TO DIE
+          pcaModule2.setPin(conf->motor_map_i2c[i+16]-16, value2);// 3 HOURS JUST TO FIND THE -16..... I WANT TO DIE
           debounceBuffer[i+16] = value2;
         }
     }
@@ -78,8 +77,8 @@ void setPcaDuty() {
 
 /// @brief Sets all motors to the specified duty cycle, mapped to the PCA_MAP defined in config.h
 /// @param dutyCycle The list of each motors duty cycle
-void setAllPcaDuty(uint16_t duty) {
-  for(uint8_t i = 0; i < pcaMapLen; i++) {
+void setAllPcaDuty(uint16_t duty, Config *conf) {
+  for(uint8_t i = 0; i < conf->motor_map_i2c_num; i++) {
     setPCAMotorDuty(i, duty);
   }
     

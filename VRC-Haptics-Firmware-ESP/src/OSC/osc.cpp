@@ -4,7 +4,7 @@
 namespace Haptics {
 namespace Wireless
 {
-    Logging::Logger logger;
+    Logging::Logger logger("Wireless");
 
 
     void printRawPacket() {
@@ -13,7 +13,6 @@ namespace Wireless
     
     /// @brief start mDNS and OSC
     void Start(Config *conf) {
-        logger.setTag("Wireless");
     
         WiFi.mode(WIFI_STA);
         WiFi.setSleep(false); // thanks Daky

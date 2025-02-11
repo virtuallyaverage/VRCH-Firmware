@@ -1,25 +1,25 @@
 #include <Arduino.h>
 
-#include "globals.hpp"
+#include "globals.h"
 
 namespace Haptics {
 namespace PwmUtils {
     void printMotorDuty() {
-    Serial.print("Motor Duty : ");
-    
-    for (uint8_t i = 0; i < totalMotors; i++) {
-        Serial.print(allMotorVals[i]);
-        Serial.print(", ");
-    }
+        Serial.print("Motor Duty : ");
+        const uint16_t totalMotors = conf.motor_map_i2c_num+conf.motor_map_ledc_num;
+        for (uint8_t i = 0; i < totalMotors; i++) {
+            Serial.print(globals.allMotorVals[i]);
+            Serial.print(", ");
+        }
 
-    Serial.println("");
+        Serial.println("");
     }
 
     void printPCADuty() {
         Serial.print("PCA Duty : ");
         
-        for (uint8_t i = 0; i < pcaMapLen; i++) {
-            Serial.print(pcaMotorVals[i]);
+        for (uint8_t i = 0; i < conf.motor_map_i2c_num; i++) {
+            Serial.print(globals.pcaMotorVals[i]);
             Serial.print(", ");
         }
 
@@ -28,15 +28,10 @@ namespace PwmUtils {
 
     void printLEDCDuty() {
         Serial.print("LEDC Duty : ");
-        #ifdef LEDC_MAP
-        for (uint8_t i = 0; i < pcaMapLen; i++) {
-            Serial.print(ledcMotorVals[i]);
+        for (uint8_t i = 0; i < conf.motor_map_ledc_num; i++) {
+            Serial.print(globals.ledcMotorVals[i]);
             Serial.print(", ");
         }
-        #else
-        Serial.print(ledcMotorVals[0]);
-        Serial.print(", ");
-        #endif
         Serial.println("");
     }
 

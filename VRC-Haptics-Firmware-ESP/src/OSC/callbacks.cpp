@@ -7,22 +7,30 @@ namespace Wireless {
 
     bool printNext = false;
 
-    inline void printRaw() {
+    void printRaw() {
         printNext = true;
     }
 
-    inline void updateMotorVals(){
-        for (uint8_t i = 0; i < totalMotors; i++) {
-            pcaMotorVals[i] = allMotorVals[i];
-            continue;
-            if (i < ledcMapLen) {
-                ledcMotorVals[i] = allMotorVals[i];
-            } else {
-                #ifndef LEDC_MAP
-                pcaMotorVals[i-ledcMapLen] = allMotorVals[i]; //assign to offset array
-                #else 
-                pcaMotorVals[i-ledcMapLen] = allMotorVals[i]; //assign to offset array
-                #endif
+    /// @brief sets the individual ledc and i2c maps from the global maps
+    /// i2c_num -> 4
+    /// ledc_num -> 2
+    ///  0, 1, 2, 3, 4, 5, (6 numbers transmitted)
+    /// [0, 1]              //ledc 
+    ///       [2, 3, 4, 5]  //i2c
+    inline void updateMotorVals(Globals *globals, Config *conf){
+        const uint16_t totalMotors = conf->motor_map_i2c_num+conf->motor_map_ledc_num;
+        for (uint16_t i = 0; i < totalMotors; i++) {
+            if (conf->motor_map_i2c_num && conf->motor_map_ledc_num) { // both i2c and ledc motors
+                // haven't got through the ledc motors
+                if (i < conf->motor_map_ledc_num) {
+                    globals->ledcMotorVals[i] = globals->allMotorVals[i];
+                } else { // past ledc
+                    globals->pcaMotorVals[i-conf->motor_map_ledc_num] = globals-> allMotorVals[i];
+                }
+            } else if (conf->motor_map_i2c_num) {// if only i2c
+                globals->pcaMotorVals[i] = globals->allMotorVals[i];
+            } else {// assume it's only ledc
+                globals->ledcMotorVals[i] = globals->allMotorVals[i];
             }
         }
     }
@@ -47,10 +55,10 @@ namespace Wireless {
             memcpy(snippet, &msg_char[OSC_MOTOR_CHAR_NUM * i], OSC_MOTOR_CHAR_NUM);
             snippet[OSC_MOTOR_CHAR_NUM] = '\0'; // null terminate the snippet
             // convert a section of the input string into an integer number
-            allMotorVals[i] = strtol(snippet, NULL, 16);
+            Haptics::globals.allMotorVals[i] = strtol(snippet, NULL, 16);
         }
 
-        updateMotorVals();
+        updateMotorVals(&Haptics::globals, &Haptics::conf);
         
     }
 

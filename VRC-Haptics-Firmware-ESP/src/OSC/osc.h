@@ -3,7 +3,7 @@
 #include <WiFi.h>
 
 #include "software_defines.h"
-#include "globals.hpp"
+#include "globals.h"
 #include "config/config.h"
 
 #ifndef OSC_H
@@ -13,17 +13,17 @@ namespace Haptics {
 namespace Wireless {
 
 // OSC client to send messages back to the hosts
-OscWiFiClient oscClient;
+inline OscWiFiClient oscClient;
 
 //publisher references
-OscPublishElementRef heartbeatPublisher;
+inline OscPublishElementRef heartbeatPublisher;
 
 // we need to get host ip first
-String selfIP = "";
-String selfMac = WiFi.macAddress();
-String hostIP = "";
-uint32_t sendPort = 0;
-uint32_t recvPort = RECIEVE_PORT;
+inline String selfIP = "";
+inline String selfMac = WiFi.macAddress();
+inline String hostIP = "";
+inline uint32_t sendPort = 0;
+inline uint32_t recvPort = RECIEVE_PORT;
 
 void StartMDNS(Config *conf);
 void StartHeartBeat();

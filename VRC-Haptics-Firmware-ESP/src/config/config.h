@@ -6,14 +6,14 @@
 
 namespace Haptics {
 
-    /// A structure for application-level configuration
+    /// user-configurable, persistent values
     struct Config {
         char wifi_ssid[32];
         char wifi_password[64];
         char mdns_name[12];
         uint8_t i2c_scl;
         uint8_t i2c_sda;
-        uint16_t i2c_speed;
+        uint32_t i2c_speed;
         uint16_t motor_map_i2c_num;
         uint16_t motor_map_i2c[MAX_I2C_MOTORS]; // needs to be an array
         uint16_t motor_map_ledc_num;
@@ -36,6 +36,8 @@ namespace Haptics {
 
     void loadConfig(Config* conf);
     void saveConfig(Config* conf);
+
+    inline Config conf;
 
 } // namespace Haptics
 

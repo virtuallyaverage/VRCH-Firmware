@@ -1,3 +1,5 @@
+#define ARDUINOJSON_DISABLE_DEPRECATION_WARNINGS //TODO: STOP USING THIS
+
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <LittleFS.h>
@@ -48,7 +50,7 @@ namespace Haptics {
         // If the file exists, read and parse it
         File configFile = LittleFS.open("/config.json", "r");
         if (configFile) {
-            DynamicJsonDocument doc(512);
+            DynamicJsonDocument doc(JSON_SIZE);
             DeserializationError error = deserializeJson(doc, configFile);
             if (!error) {
                 // Load WiFi settings (using defaults if missing)
@@ -107,7 +109,7 @@ namespace Haptics {
     
     // Function to save the current configuration to LittleFS
     void saveConfig(Config* conf) {
-        DynamicJsonDocument doc(512);
+        DynamicJsonDocument doc(JSON_SIZE);
         doc["wifi_ssid"] = conf->wifi_ssid;
         doc["wifi_password"] = conf->wifi_password;
 

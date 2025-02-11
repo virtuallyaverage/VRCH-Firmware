@@ -2,14 +2,14 @@
 #define CALLBACKS_H
 
 #include <ArduinoOSCWiFi.h>
-#include "globals.hpp"
+#include "globals.h"
 #include "osc.h"
 #include "software_defines.h"
 
 namespace Haptics  {
 namespace Wireless { 
-    inline void printRaw();
-    inline void updateMotorVals();
+    void printRaw();
+    inline void updateMotorVals(Globals *globals, Config *conf);
     void motorMessage_callback(const OscMessage& message);
     void printOSCMessage(const OscMessage& message);
 
