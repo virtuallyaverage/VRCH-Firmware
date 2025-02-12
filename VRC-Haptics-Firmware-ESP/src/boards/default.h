@@ -10,4 +10,6 @@
 // Keep prefered speed at front
 #define I2C_SPEEDS 4000000U, 100000U
 
+#define SUPPORTS_BITBANG
+
 #endif // DEFAULT_H

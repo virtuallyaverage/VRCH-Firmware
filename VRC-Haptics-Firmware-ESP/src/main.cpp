@@ -17,7 +17,7 @@
 #include "testing/rampPWM.hpp"
 #include "PWM/PWMUtils.hpp"
 
-// Global Logger instance
+// Main Logger instance
 Haptics::Logging::Logger logger("Main");
 
 void setup() {

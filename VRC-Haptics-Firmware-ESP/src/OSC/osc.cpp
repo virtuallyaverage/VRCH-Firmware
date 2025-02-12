@@ -103,7 +103,6 @@ namespace Wireless
     /// @brief Push and pull OSC updates
     void Tick() {
         OscWiFi.update(); // should be called to subscribe + publish osc
-        
     }
 
 
