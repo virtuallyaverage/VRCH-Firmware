@@ -39,11 +39,11 @@ namespace PwmUtils {
     }
 
     void printLEDCDuty() {
-        if (!conf.motor_map_i2c_num) return;
+        if (!Haptics::conf.motor_map_i2c_num) return;
 
         Serial.print("LEDC Duty : ");
         for (uint8_t i = 0; i < conf.motor_map_ledc_num; i++) {
-            Serial.print(globals.ledcMotorVals[i]);
+            Serial.print(Haptics::globals.ledcMotorVals[i]);
             Serial.print(", ");
         }
         Serial.println("");

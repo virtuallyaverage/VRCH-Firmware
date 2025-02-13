@@ -10,7 +10,7 @@
 namespace Haptics  {
 namespace Wireless {
     void printRaw();
-    inline void updateMotorVals(Globals *globals, Config *conf);
+    void updateMotorVals();
     void motorMessage_callback(const OscMessage& message);
     void printOSCMessage(const OscMessage& message);
 

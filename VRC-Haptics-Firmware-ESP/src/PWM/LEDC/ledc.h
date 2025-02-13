@@ -12,9 +12,9 @@
 namespace Haptics {
 namespace LEDC {
 
+    void tick();
     inline int setChannel(const uint8_t channel, const uint16_t duty);
-    int setAllLedcDuty(const uint16_t duty, Config *conf);
-    int setLedcDuty(Globals *globals, Config *conf);
+    int setAllTo(const uint16_t duty);
     int start(Config *conf);
 } // namespace LEDC
 } // namespace Haptics

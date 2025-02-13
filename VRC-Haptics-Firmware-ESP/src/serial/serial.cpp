@@ -4,6 +4,7 @@
 #include "logging/Logger.h" // For logger calls
 #include "board_defines.h"  // Provides board-specific defines
 #include "PWM/LEDC/ledc.h"
+#include "OSC/callbacks.h"
 #include <Arduino.h>
 
 // Helper function to trim leading/trailing whitespace from a String.
@@ -172,6 +173,7 @@ namespace Haptics {
       int totalMotors = MAX_LEDC_MOTORS + MAX_I2C_MOTORS;
       if (idx >= 0 && idx < totalMotors) {
         globals.allMotorVals[idx] = motorValue;
+        Wireless::updateMotorVals(); //pushes updates to their respective devices
         logger.info("Set motor value at index %d to %d", idx, motorValue);
       } else {
         logger.error("Motor index out of range.");

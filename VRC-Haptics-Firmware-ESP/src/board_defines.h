@@ -2,11 +2,15 @@
 #define BOARD_DEFINES_H
 
 // switch between board imports
-#ifdef BOARD_ESP32C3_SUPERMINI
+#if defined(BOARD_ESP32C3_SUPERMINI)
 #include "boards/esp32c3-supermini.h"
+#elif defined(BOARD_ESP32S3_SUPERMINI)
+#include "boards/esp32s3-supermini.h"
+#elif defined(BOARD_ESP32)
+#include "boards/esp32.h"
 #else 
 #include "boards/default.h"
 #warning "no specific board defined, using default values. This typically isn't desired behaviour"
 #endif
 
-#endif
+#endif // BOARD_DEFINES_H

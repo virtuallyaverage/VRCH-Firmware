@@ -34,7 +34,6 @@ void setup() {
     return;
   }
 
-
   Haptics::loadConfig();
   Haptics::initGlobals();
 
@@ -54,7 +53,7 @@ void loop() {
   }
 
   Haptics::Wireless::Tick();
-  Haptics::LEDC::setLedcDuty(&Haptics::globals, &Haptics::conf);
+  Haptics::LEDC::tick();
   Haptics::PCA::setPcaDuty(&Haptics::globals, &Haptics::conf);
   Haptics::SerialComm::tick();
 

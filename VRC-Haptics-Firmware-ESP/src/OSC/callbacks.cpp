@@ -17,20 +17,20 @@ namespace Wireless {
     ///  0, 1, 2, 3, 4, 5, (6 numbers transmitted)
     /// [0, 1]              //ledc 
     ///       [2, 3, 4, 5]  //i2c
-    inline void updateMotorVals(Globals *globals, Config *conf){
-        const uint16_t totalMotors = conf->motor_map_i2c_num+conf->motor_map_ledc_num;
+    void updateMotorVals(){
+        const uint16_t totalMotors = Haptics::conf.motor_map_i2c_num+Haptics::conf.motor_map_ledc_num;
         for (uint16_t i = 0; i < totalMotors; i++) {
-            if (conf->motor_map_i2c_num && conf->motor_map_ledc_num) { // both i2c and ledc motors
+            if (Haptics::conf.motor_map_i2c_num && Haptics::conf.motor_map_ledc_num) { // both i2c and ledc motors
                 // haven't got through the ledc motors
-                if (i < conf->motor_map_ledc_num) {
-                    globals->ledcMotorVals[i] = globals->allMotorVals[i];
+                if (i < Haptics::conf.motor_map_ledc_num) {
+                    Haptics::globals.ledcMotorVals[i] = Haptics::globals.allMotorVals[i];
                 } else { // past ledc
-                    globals->pcaMotorVals[i-conf->motor_map_ledc_num] = globals-> allMotorVals[i];
+                    Haptics::globals.pcaMotorVals[i-Haptics::conf.motor_map_ledc_num] = Haptics::globals. allMotorVals[i];
                 }
-            } else if (conf->motor_map_i2c_num) {// if only i2c
-                globals->pcaMotorVals[i] = globals->allMotorVals[i];
+            } else if (Haptics::conf.motor_map_i2c_num) {// if only i2c
+                Haptics::globals.pcaMotorVals[i] = Haptics::globals.allMotorVals[i];
             } else {// assume it's only ledc
-                globals->ledcMotorVals[i] = globals->allMotorVals[i];
+                Haptics::globals.ledcMotorVals[i-conf.motor_map_i2c_num] = Haptics::globals.allMotorVals[i];
             }
         }
     }
@@ -58,7 +58,7 @@ namespace Wireless {
             Haptics::globals.allMotorVals[i] = strtol(snippet, NULL, 16);
         }
 
-        updateMotorVals(&Haptics::globals, &Haptics::conf);
+        updateMotorVals();
         
     }
 
