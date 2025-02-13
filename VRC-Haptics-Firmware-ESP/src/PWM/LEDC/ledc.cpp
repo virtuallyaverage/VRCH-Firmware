@@ -65,16 +65,6 @@ void tick() {
     }
 }
 
-/// Sets ledc attached motors to the global configuration
-int setLedcDuty() {
-    // TODO: CONVERT FROM 16 bit to 12 bit(4096)
-    for (uint8_t i = 0; i < Haptics::conf.motor_map_ledc_num; i++) {
-        ledcWrite(i, Haptics::globals.ledcMotorVals[i]);
-    }
-
-    return 0;
-}
-
 int start(Config *conf) {
     uint16_t ledcMapLen = conf->motor_map_ledc_num;
 

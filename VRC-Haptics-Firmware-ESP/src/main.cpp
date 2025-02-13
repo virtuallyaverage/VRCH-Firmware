@@ -29,7 +29,11 @@ void setup() {
   #endif
 
   // Initialize LittleFS
+  #if defined(ESP8266)
+  if (!LittleFS.begin()) { // ESP8 doesnt? have the format fucntion i guess
+  #else
   if (!LittleFS.begin(true)) {
+  #endif
     logger.error("LittleFS mount failed, please restart");
     return;
   }

@@ -9,10 +9,10 @@
 
 // Helper function to trim leading/trailing whitespace from a String.
 static String trim(const String &str) {
-  int start = 0;
+  unsigned int start = 0;
   while (start < str.length() && isspace(str.charAt(start)))
     start++;
-  int end = str.length() - 1;
+  unsigned int end = str.length() - 1;
   while (end >= 0 && isspace(str.charAt(end)))
     end--;
   return (end >= start) ? str.substring(start, end + 1) : "";
@@ -235,18 +235,7 @@ namespace Haptics {
           remaining = remaining.substring(commaIndex + 1);
         }
         token = trim(token);
-        int pin = token.toInt();
-        bool valid = false;
-        for (size_t i = 0; i < numAllowedI2cPins; i++) {
-          if (allowedI2cPins[i] == pin) {
-            valid = true;
-            break;
-          }
-        }
-        if (!valid) {
-          logger.error("Invalid I2C pin: %d", pin);
-          return;
-        }
+        int pin = token.toInt(); // TODO: add I2c Sanatization
         conf.motor_map_i2c[count++] = (uint16_t)pin;
       }
       conf.motor_map_i2c_num = count;

@@ -2,7 +2,6 @@
 #define LEDC_ME_H
 
 #include <Arduino.h>
-#include <esp32-hal-ledc.h>
 
 #include "globals.h"
 #include "software_defines.h"

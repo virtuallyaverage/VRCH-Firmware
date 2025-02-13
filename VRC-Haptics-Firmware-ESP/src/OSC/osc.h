@@ -1,6 +1,14 @@
 #include <ArduinoOSCWiFi.h>
-#include <ESPmDNS.h>
-#include <WiFi.h>
+
+
+// esp8266 specific defines:
+#if defined(ESP8266)
+    #include <ESP8266mDNS.h>
+    #include <ESP8266WiFi.h>
+#else 
+    #include <WiFi.h>
+    #include <ESPmDNS.h>
+#endif
 
 #include "software_defines.h"
 #include "globals.h"
