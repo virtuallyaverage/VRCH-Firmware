@@ -9,7 +9,7 @@ Adafruit_PWMServoDriver pcaModule2 = Adafruit_PWMServoDriver(PCA_2, Wire);//, Wi
 bool firstPCAConnected = false;
 bool secondPCAConnected = false;
 
-uint16_t debounceBuffer[MAX_I2C_MOTORS];
+uint16_t debounceBuffer[MAX_I2C_MOTORS+1];
 Logging::Logger logger("I2C");
 
 /// @brief Start pca module communication

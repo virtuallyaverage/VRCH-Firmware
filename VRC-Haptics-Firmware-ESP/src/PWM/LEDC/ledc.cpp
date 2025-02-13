@@ -16,53 +16,58 @@ time_t timeLastLow[MAX_LEDC_MOTORS] = { 0 }; // the last time a motor indices wa
 const double_t UpdateFrequency = LEDC_FREQUENCY;
 const uint64_t updatePeriod = (1./UpdateFrequency)*1000000; // microseconds
 
+#define TIMER_START uint32_t dwStart = ESP.getCycleCount();
+#define TIMER_END Haptics::profiler.digitalWriteCycles += (ESP.getCycleCount() - dwStart);
+
 void tick() {
-    // Read the current time once for consistency
+    uint32_t loopStart = ESP.getCycleCount();
     uint32_t now = micros();
     uint16_t num_motors = Haptics::conf.motor_map_ledc_num;
-    
+
     for(uint16_t motor = 0; motor < num_motors; motor++) {
-        // Retrieve the duty value once (0 to 65535)
         uint16_t duty = Haptics::globals.ledcMotorVals[motor];
-        
+
         // Special cases: 0% duty -> always off; 100% duty -> always on
         if (duty == 0) {
-            digitalWrite(Haptics::conf.motor_map_ledc[motor], LOW);
-            // Optionally, force state variables if used later:
-            toggleStates[motor] = false;
-            continue;
+            if(toggleStates[motor]) {
+                digitalWrite(Haptics::conf.motor_map_ledc[motor], LOW);
+                toggleStates[motor] = false;
+                continue;
+            } else {
+                continue;
+            }
         }
         if (duty == 65535) {
-            digitalWrite(Haptics::conf.motor_map_ledc[motor], HIGH);
-            toggleStates[motor] = true;
-            continue;
+            if(!toggleStates[motor]) {
+                digitalWrite(Haptics::conf.motor_map_ledc[motor], HIGH);
+                toggleStates[motor] = true;
+            } else {
+                continue;
+            }
         }
         
-        // Normal PWM: Calculate on-time based on duty ratio.
-        double dutyRatio = duty / 65535.0;
+        double dutyRatio = duty / 65535.0; // floating point operations
         uint32_t onTime = (uint32_t)(updatePeriod * dutyRatio);
-
-        // Determine elapsed time since the start of the current period.
-        // timeLastLow[motor] here represents the start of the current PWM period.
-        uint32_t elapsed = now - timeLastLow[motor];
+        uint32_t elapsed = now - timeLastLow[motor];// floating point operations end
 
         if (toggleStates[motor]) {
-            // Motor is currently HIGH.
-            if (elapsed >= onTime) {
-                // It’s time to go LOW
+            TIMER_START  // start ticker
+            if (elapsed > onTime) { //90.4% of cycles in the function are used in the comparison
+                // 0.05% (practically just noise) for entire inside of the if
                 digitalWrite(Haptics::conf.motor_map_ledc[motor], LOW);
                 toggleStates[motor] = false;
             }
+            TIMER_END // end ticker
         } else {
-            // Motor is currently LOW.
-            if (elapsed >= updatePeriod) {
-                // Start of a new PWM cycle: set HIGH and reset period start.
+            if (elapsed > updatePeriod) {
                 digitalWrite(Haptics::conf.motor_map_ledc[motor], HIGH);
                 toggleStates[motor] = true;
                 timeLastLow[motor] = now;
             }
         }
+        
     }
+    Haptics::profiler.loopCycles += (ESP.getCycleCount() - loopStart);
 }
 
 int start(Config *conf) {

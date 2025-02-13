@@ -19,6 +19,14 @@ namespace Haptics {
         return g;
     }
 
+    // Define a structure to store timing data
+    struct TimingData {
+        uint32_t digitalWriteCycles;
+        uint32_t loopCycles;
+    };
+
+    inline TimingData profiler = {0, 0};
+
     // Declare a global instance of Globals.
     // (C++17 inline variables ensure one definition across translation units.)
     inline Globals globals = initGlobals();

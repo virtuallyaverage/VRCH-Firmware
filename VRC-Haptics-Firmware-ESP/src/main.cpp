@@ -69,6 +69,15 @@ void loop() {
     Haptics::PwmUtils::printAllDuty();
     Haptics::Wireless::printRawPacket();
 
+    // print profiler
+    if ( Haptics::profiler.loopCycles ) { // avoid division by zero
+      float ratio = static_cast<float>(Haptics::profiler.digitalWriteCycles) / Haptics::profiler.loopCycles;
+      logger.debug("TIMING: DigitalWrite: %u, loopCycles: %u, WriteRatio: %f%", Haptics::profiler.digitalWriteCycles, Haptics::profiler.loopCycles, ratio * 100);
+      Haptics::profiler.digitalWriteCycles = 0;
+      Haptics::profiler.loopCycles = 0;
+    }
+    
+
     startMillis = millis();
     ticks = 0;
   }
