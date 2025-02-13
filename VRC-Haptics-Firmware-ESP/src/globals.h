@@ -9,8 +9,7 @@ namespace Haptics {
     struct Globals {
         uint16_t ledcMotorVals[MAX_LEDC_MOTORS];
         uint16_t pcaMotorVals[MAX_I2C_MOTORS];
-        uint16_t bitbangMotorVals[MAX_BITBANG_MOTORS];
-        uint16_t allMotorVals[MAX_LEDC_MOTORS + MAX_I2C_MOTORS + MAX_BITBANG_MOTORS];
+        uint16_t allMotorVals[MAX_LEDC_MOTORS + MAX_I2C_MOTORS];
         bool reinitLEDC;
     };
 
