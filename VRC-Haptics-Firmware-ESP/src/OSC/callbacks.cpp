@@ -23,14 +23,14 @@ namespace Wireless {
             if (Haptics::conf.motor_map_i2c_num && Haptics::conf.motor_map_ledc_num) { // both i2c and ledc motors
                 // haven't got through the ledc motors
                 if (i < Haptics::conf.motor_map_ledc_num) {
-                    Haptics::globals.ledcMotorVals[i] = Haptics::globals.allMotorVals[i];
+                    Haptics::globals.ledcMotorVals[i] = Haptics::globals.allMotorVals[i] >> 8;
                 } else { // past ledc
                     Haptics::globals.pcaMotorVals[i-Haptics::conf.motor_map_ledc_num] = Haptics::globals. allMotorVals[i];
                 }
             } else if (Haptics::conf.motor_map_i2c_num) {// if only i2c
                 Haptics::globals.pcaMotorVals[i] = Haptics::globals.allMotorVals[i];
             } else {// assume it's only ledc
-                Haptics::globals.ledcMotorVals[i-conf.motor_map_i2c_num] = Haptics::globals.allMotorVals[i];
+                Haptics::globals.ledcMotorVals[i-conf.motor_map_i2c_num] = Haptics::globals.allMotorVals[i] >> 8;
             }
         }
     }
