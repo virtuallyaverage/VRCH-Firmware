@@ -10,12 +10,20 @@ namespace Haptics {
         uint8_t ledcMotorVals[MAX_LEDC_MOTORS];
         uint16_t pcaMotorVals[MAX_I2C_MOTORS];
         uint16_t allMotorVals[MAX_LEDC_MOTORS + MAX_I2C_MOTORS];
+        bool updatedMotors;
         bool reinitLEDC;
+        bool processOscCommand; // moves the heavy commands out of ISR time
+        bool processSerCommand;
+        String commandToProcess;
     };
 
     inline Globals initGlobals() {
         Globals g = {};
         g.reinitLEDC = false;
+        g.updatedMotors = false;
+        g.processOscCommand = false;
+        g.processSerCommand = false;
+        g.commandToProcess = "";
         return g;
     }
 
@@ -28,7 +36,6 @@ namespace Haptics {
     inline TimingData profiler = {0, 0};
 
     // Declare a global instance of Globals.
-    // (C++17 inline variables ensure one definition across translation units.)
     inline Globals globals = initGlobals();
 } // namespace Haptics
 

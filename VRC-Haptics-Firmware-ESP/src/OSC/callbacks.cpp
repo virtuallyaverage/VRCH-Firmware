@@ -58,8 +58,15 @@ namespace Wireless {
             Haptics::globals.allMotorVals[i] = strtol(snippet, NULL, 16);
         }
 
-        updateMotorVals();
+        // push the changes to the individual motor array's
+        Haptics::globals.updatedMotors = true;
         
+    }
+
+    void commandMessageCallback(const OscMessage& msg) {
+        // schedule processing the command on the next cycle.
+        Haptics::globals.commandToProcess = msg.arg<String>(0);
+        Haptics::globals.processOscCommand = true;
     }
 
 

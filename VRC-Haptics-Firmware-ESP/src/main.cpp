@@ -5,10 +5,12 @@
 // main config files
 #include "globals.h"
 #include "config/config.h"
+#include "config/config_parser.h"
 #include "logging/Logger.h"
 
 // import modules
 #include "OSC/osc.h"
+#include "OSC/callbacks.h"
 #include "PWM/PCA/pca.h"
 #include "PWM/LEDC/ledc.h"
 #include "serial/serial.h"
@@ -60,6 +62,24 @@ void loop() {
   Haptics::LEDC::tick();
   Haptics::PCA::setPcaDuty(&Haptics::globals, &Haptics::conf);
   Haptics::SerialComm::tick();
+
+  if (Haptics::globals.updatedMotors) {
+    Haptics::globals.updatedMotors = false;
+    Haptics::Wireless::updateMotorVals();
+  }
+
+  if (Haptics::globals.processOscCommand) { // if we were sent a command over OSC
+    String response = Haptics::parseInput(Haptics::globals.commandToProcess);
+    OscMessage commandResponse(COMMAND_ADDRESS);
+    commandResponse.pushString(response);
+    Haptics::Wireless::oscClient.send(Haptics::Wireless::hostIP, Haptics::Wireless::sendPort, response);
+    Haptics::globals.commandToProcess = "";
+    Haptics::globals.processOscCommand = false;
+  } else if (Haptics::globals.processOscCommand) { // If we were sent a command over serial
+    String response = Haptics::parseInput(Haptics::globals.commandToProcess);
+    Serial.println(response);
+    Haptics::globals.processOscCommand = false;
+  }
 
   // rampTesting(); // uncomment this to continually ramp up and down (USED FOR MOTOR TESTING)
   

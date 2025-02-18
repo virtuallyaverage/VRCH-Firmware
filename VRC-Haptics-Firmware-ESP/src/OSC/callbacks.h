@@ -13,7 +13,7 @@ namespace Wireless {
     void updateMotorVals();
     void motorMessage_callback(const OscMessage& message);
     void printOSCMessage(const OscMessage& message);
-
+    void commandMessageCallback(const OscMessage& msg);
 
 } // namespace Wireless
 } // namespace Haptics

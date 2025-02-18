@@ -65,11 +65,11 @@ void setPcaDuty(Globals *globals, Config *conf) {
         const uint16_t value = globals->pcaMotorVals[i];
         const uint16_t value2 = globals->pcaMotorVals[i+16];
         if (value != debounceBuffer[i] && firstPCAConnected) {
-          pcaModule1.setPin(conf->motor_map_i2c[i], value);
+          pcaModule1.setPin(conf->motor_map_i2c[i], value >> 4);
           debounceBuffer[i] = value;
         }
         if (value2 != debounceBuffer[i+16] && secondPCAConnected) { //only send to second if it is connected
-          pcaModule2.setPin(conf->motor_map_i2c[i+16]-16, value2);// 3 HOURS JUST TO FIND THE -16..... I WANT TO DIE
+          pcaModule2.setPin(conf->motor_map_i2c[i+16]-16, value2 >> 4);// 3 HOURS JUST TO FIND THE -16..... I WANT TO DIE
           debounceBuffer[i+16] = value2;
         }
     }

@@ -1,5 +1,6 @@
 #include "OSC/callbacks.h"
 #include "logging/Logger.h"
+#include "OSC/osc.h"
 
 namespace Haptics {
 namespace Wireless
@@ -24,7 +25,7 @@ namespace Wireless
         }
     
         // Print the IP address
-        selfIP = WiFi.localIP().toString();
+        const String selfIP = WiFi.localIP().toString();
         logger.debug("Connected @ %s", selfIP);
     
         // Start listening for OSC server
@@ -56,16 +57,10 @@ namespace Wireless
         return WiFi.status() == WL_CONNECTED;
     }
     
-    void StartHeartBeat() {
-        if (hostIP.isEmpty() | !sendPort) {
-            logger.debug("HeartBeat set up before ip filled!");
-        } else if (heartbeatPublisher){
-            logger.debug("Heartbeat already set up");
-        }
-    
+    void StartHeartBeat( String hostIP, uint16_t sendPort) {
         // Publish heart beat on one second intervals
-        OscWiFi.publish(hostIP, sendPort, HEARTBEAT_ADDRESS, &millis, selfIP, selfMac) 
-            -> setFrameRate(1);
+        OscWiFi.publish(hostIP, sendPort, HEARTBEAT_ADDRESS) 
+            -> setFrameRate(1.);
         heartbeatPublisher = OscWiFi.getPublishElementRef(hostIP, sendPort, HEARTBEAT_ADDRESS);
     
         if (!heartbeatPublisher) {
@@ -82,6 +77,7 @@ namespace Wireless
     
         //create our own recieving server
         OscWiFi.subscribe(RECIEVE_PORT, MOTOR_ADDRESS, &motorMessage_callback);
+        OscWiFi.subscribe(RECIEVE_PORT, COMMAND_ADDRESS, &commandMessageCallback);
     
         logger.debug("Received ping from: %s", hostIP);
     
@@ -93,9 +89,10 @@ namespace Wireless
         pingResponse.pushInt32(RECIEVE_PORT);
         pingResponse.pushString(WiFi.macAddress());
         oscClient.send(hostIP, sendPort, pingResponse);
+        logger.debug("Sending hrtbt to %s:%d", hostIP, sendPort);
     
         if (!heartbeatPublisher){
-            StartHeartBeat();
+           StartHeartBeat(hostIP, sendPort);
         }
     
     }

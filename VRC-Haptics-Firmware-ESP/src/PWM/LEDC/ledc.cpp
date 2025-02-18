@@ -4,13 +4,17 @@ namespace Haptics {
 namespace LEDC {
 Logging::Logger logger("LEDC");
 
-#define RESOLUTION (1 << 8)
 unsigned long nextTick = 0; // big ticks that represent moments where all non-zero pins are set to high
 unsigned long nextTock = 0; // small "subticks" that have RESOLUTION number of steps that set pins to low
 uint8_t tockCount = 0; // marks how many subticks have been achieved in a tock period
+unsigned long missedTocks = 0;
+unsigned long oldMissedTocks = 0;
+
+//frequency calculationss
 const double_t UpdateFrequency = LEDC_FREQUENCY;
 const unsigned long tickPeriod = (1./UpdateFrequency)*1000000; // microseconds
-const unsigned long tockPeriod = tickPeriod / RESOLUTION; // microseconds
+const unsigned long tockPeriod = tickPeriod / (1 << LEDC_RESOLUTION); // microseconds
+
 
 void tick() {
     unsigned long now = micros();
@@ -19,6 +23,12 @@ void tick() {
     /// NOTE: CURRENTLY SLIDES ONE CYCLE (16ms) every 10 seconds
 
     if (now > nextTick) { //check for tick first 
+
+        unsigned long diff = missedTocks - oldMissedTocks;
+        if (diff != 0) {
+            oldMissedTocks = missedTocks;
+            logger.debug("late: %d", diff);
+        }
 
         uint16_t num_motors = Haptics::conf.motor_map_ledc_num;// only need this if we make it in
 
@@ -38,21 +48,30 @@ void tick() {
         }
         return;
     } 
-    if (now > nextTock) {
-        uint16_t num_motors = Haptics::conf.motor_map_ledc_num;
-        tockCount++; // increment beforehand
 
-        // see which values should be set on this tock 
-        // maybe sort the list somewhere so we just go through the few indices due on this tock?
+    // Catch up if we missed a tock
+    bool first = true;
+    while (now > nextTock) {
+        tockCount++; // increment tock count
+        
+        uint16_t num_motors = Haptics::conf.motor_map_ledc_num;
         for(uint16_t motor = 0; motor < num_motors; motor++) {
             uint8_t dutyCycle = Haptics::globals.ledcMotorVals[motor];
             if (dutyCycle == tockCount) {
                 digitalWrite(Haptics::conf.motor_map_ledc[motor], LOW);
             }
         }
-        nextTock = now + tockPeriod;
-        return;
+        nextTock += tockPeriod;
+        // Update now in case a lot of time has passed
+        now = micros();
+
+        if (!first) { // skip first
+            missedTocks++;
+        } else {
+            first = true;
+        }
     }
+    
 }
 
 int start(Config *conf) {
