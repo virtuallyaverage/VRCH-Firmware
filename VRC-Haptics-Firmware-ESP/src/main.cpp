@@ -49,25 +49,34 @@ void setup() {
 }
 
 uint32_t ticks = 0;
-unsigned long startMillis = millis();
+time_t now = 0;
+time_t lastSerialPush = millis();
+time_t lastWifiTick = millis();
+
+#define TIMER_START uint32_t dwStart = ESP.getCycleCount();
+#define TIMER_END Haptics::profiler.digitalWriteCycles += (ESP.getCycleCount() - dwStart);
+uint32_t loopStart = 0;
+uint32_t loopTotal = 0;
+
 
 void loop() {
-  if (Haptics::globals.reinitLEDC == true) { // prevents not defined error
+  loopStart = ESP.getCycleCount();
+  
+  if (Haptics::globals.reinitLEDC) { // prevents not defined error
     Haptics::LEDC::start(&Haptics::conf);
     logger.debug("Restarted LEDC");
     Haptics::globals.reinitLEDC = false;
   }
 
-  Haptics::Wireless::Tick();
   Haptics::LEDC::tick();
   Haptics::PCA::setPcaDuty(&Haptics::globals, &Haptics::conf);
   Haptics::SerialComm::tick();
 
+  // Moves heavy lifting out of ISR's
   if (Haptics::globals.updatedMotors) {
     Haptics::globals.updatedMotors = false;
     Haptics::Wireless::updateMotorVals();
   }
-
   if (Haptics::globals.processOscCommand) { // if we were sent a command over OSC
     String response = Haptics::parseInput(Haptics::globals.commandToProcess);
     OscMessage commandResponse(COMMAND_ADDRESS);
@@ -75,21 +84,31 @@ void loop() {
     Haptics::Wireless::oscClient.send(Haptics::Wireless::hostIP, Haptics::Wireless::sendPort, response);
     Haptics::globals.commandToProcess = "";
     Haptics::globals.processOscCommand = false;
-  } else if (Haptics::globals.processOscCommand) { // If we were sent a command over serial
+  } else if (Haptics::globals.processSerCommand) { // If we were sent a command over serial
     String response = Haptics::parseInput(Haptics::globals.commandToProcess);
     Serial.println(response);
-    Haptics::globals.processOscCommand = false;
-  }
+    Haptics::globals.processSerCommand = false;
+  }  
 
-  // rampTesting(); // uncomment this to continually ramp up and down (USED FOR MOTOR TESTING)
-  
   ticks += 1;
-  if (millis() - startMillis >= 1000) {
+  now = millis();
+  if (now - lastWifiTick >= 7) {// Roughly 150hz
+    Haptics::Wireless::Tick();
+    lastWifiTick = now;
+  }
+  loopTotal += ESP.getCycleCount() - loopStart;
+
+  if (now - lastSerialPush >= 1000) {
     logger.debug("Loop/sec: %d", ticks);
     Haptics::PwmUtils::printAllDuty();
     Haptics::Wireless::printRawPacket();
 
-    startMillis = millis();
+    //float ratio = (float)Haptics::profiler.digitalWriteCycles / loopTotal;
+    //logger.debug("tested ratio: %f", ratio);
+    //Haptics::profiler.digitalWriteCycles = 0;
+    loopTotal = 0;
+
+    lastSerialPush = now;
     ticks = 0;
   }
 }

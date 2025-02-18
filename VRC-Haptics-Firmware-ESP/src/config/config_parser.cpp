@@ -9,26 +9,8 @@ namespace Haptics {
         return ((uint8_t*)&conf) + desc.offset;
     }
 
-    /// @brief Parses input and manages the configuration accordingly
-    /// @param input the input string to be processed for a command
-    /// @return The return message
-    String parseInput(const String &input) {
-        // get tokens
-        String command, key, value, feedback;
-        cutInput(input, command, key, value);
-
-        // parse each command
-        if (command == "SET") {
-            feedback = handleSet(key, value);
-            saveConfig();
-        } else if (command == "GET") {
-            feedback = handleGet(key, value);
-        } else {
-            feedback = "Unknown command: "+ input;
-        }
-
-        return feedback;
-    }
+    String getArrayFieldValue(void* ptr, const ConfigFieldDescriptor &field);
+    bool setArrayFieldValue(void* ptr, const ConfigFieldDescriptor &field, const String& input);
 
     /// @brief Cuts the input string into command, keys, and value tokens.
     /// @param input String to cut up
@@ -123,9 +105,12 @@ namespace Haptics {
                 const ConfigFieldDescriptor& field = configFields[i];
                 void* ptr = getFieldPtr(field);
                 String fieldVal;
+                bool outputQuotes = false; // controls whether to wrap fieldVal in quotes
+    
                 switch (field.type) {
                     case CONFIG_TYPE_STRING:
                         fieldVal = String((char*)ptr);
+                        outputQuotes = true;
                         break;
                     case CONFIG_TYPE_UINT8:
                         fieldVal = String(*(uint8_t*)ptr);
@@ -141,12 +126,22 @@ namespace Haptics {
                         break;
                     case CONFIG_TYPE_ARRAY:
                         fieldVal = getArrayFieldValue(ptr, field);
+                        // Only wrap array elements in quotes if the array's subtype is string.
+                        if (field.subType == CONFIG_TYPE_STRING) {
+                            outputQuotes = true;
+                        }
                         break;
                 }
-                json += "\"" + String(field.name) + "\":\"" + fieldVal + "\"";
+
+                json += "\"" + String(field.name) + "\":";
+                if (outputQuotes) {
+                    json += "\"" + fieldVal + "\"";
+                } else {
+                    json += fieldVal;
+                }
                 if (i < configFieldsCount - 1)
                     json += ",";
-            }
+                }
             json += "}";
             return json;
         }
@@ -170,7 +165,7 @@ namespace Haptics {
                 return String(*(uint32_t*)ptr);
             case CONFIG_TYPE_FLOAT:
                 return String(*(float*)ptr);
-            case CONFIG_TYPE_ARRAY:
+            case CONFIG_TYPE_ARRAY: {
                 uint16_t* arr = (uint16_t*)((uint8_t*)&conf + field->offset);
                 for (size_t i = 0; i < field->size; i++) {
                     result += String(arr[i]);
@@ -178,6 +173,7 @@ namespace Haptics {
                         result += ",";
                 }
                 return result;
+            }
             default:
                 return "Error: Unsupported type";
         }
@@ -211,8 +207,6 @@ namespace Haptics {
                     result += String(arr[j]);
                     break;
                 }
-                // If you ever support arrays of strings, you'll need to know the size
-                // of each element and cast accordingly.
                 default:
                     result += "\"?\"";
                     break;
@@ -301,6 +295,27 @@ namespace Haptics {
         }
         // Return success if at least one token was processed.
         return (count > 0);
+    }
+
+    /// @brief Parses input and manages the configuration accordingly
+    /// @param input the input string to be processed for a command
+    /// @return The return message
+    String parseInput(const String &input) {
+        // get tokens
+        String command, key, value, feedback;
+        cutInput(input, command, key, value);
+
+        // parse each command
+        if (command == "SET") {
+            feedback = handleSet(key, value);
+            saveConfig();
+        } else if (command == "GET") {
+            feedback = handleGet(key, value);
+        } else {
+            feedback = "Unknown command: "+ input;
+        }
+
+        return feedback;
     }
 
 }

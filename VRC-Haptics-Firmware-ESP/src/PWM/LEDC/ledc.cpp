@@ -27,7 +27,10 @@ void tick() {
         unsigned long diff = missedTocks - oldMissedTocks;
         if (diff != 0) {
             oldMissedTocks = missedTocks;
-            logger.debug("late: %d", diff);
+            if (diff > 10) { // see if we should make a big deal about this
+                logger.debug("late: %d", diff);
+            }
+            
         }
 
         uint16_t num_motors = Haptics::conf.motor_map_ledc_num;// only need this if we make it in
@@ -44,6 +47,8 @@ void tick() {
             uint8_t dutyCycle = Haptics::globals.ledcMotorVals[motor];
             if (dutyCycle) {
                 digitalWrite(Haptics::conf.motor_map_ledc[motor], HIGH);
+            } else {
+                digitalWrite(Haptics::conf.motor_map_ledc[motor], LOW);
             }
         }
         return;
@@ -65,10 +70,10 @@ void tick() {
         // Update now in case a lot of time has passed
         now = micros();
 
-        if (!first) { // skip first
-            missedTocks++;
+        if (first) { // skip first
+            first = false;
         } else {
-            first = true;
+            missedTocks++;
         }
     }
     
